@@ -46,6 +46,14 @@ OPENAI_API_KEY=your_openai_api_key
 flutter run
 ```
 
+### status
+
+an active prototype. it currently has no hosted demo or release build.
+
+### notes
+
+the app expects a local `.env` file at runtime. `.env.example` documents the required key; never commit your own `.env` file.
+
 ---
 
 license: mit
