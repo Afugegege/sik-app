@@ -1,0 +1,254 @@
+# 식 (sik) — Final MVP
+
+**Concept:** A Korean minimalist AI cooking app that helps users discover, modify, and cook recipes based on what they have, what they want, and how they want to cook.
+
+### 1. Explore
+
+Main screen with an Instagram-style food discovery feed.
+
+* Personalized recommendations
+* **Cook with what you have**
+* **Almost there**
+* **Easy to find near you**
+* Quick / simple
+* Pastry / dessert
+* Filters: cuisine, food type, cooking method, time
+* Contextual AI input fixed near the bottom
+
+AI input:
+
+> “what do you want to cook?”
+
+---
+
+### 2. Recipe
+
+Large food photo + clean recipe information.
+
+Shows:
+
+* Recipe name
+* Cuisine / food type
+* Cooking method
+* Time
+* Difficulty
+* Kitchen match %
+* Ingredients
+* Have / missing ingredients
+* Save button
+* Start cooking
+
+Supported methods:
+
+**Stovetop · Oven · Air Fryer · Microwave · No-cook**
+
+---
+
+### 3. AI Modify / Create
+
+The AI input exists on major screens, especially Explore, Recipe, and Fridge.
+
+User can say:
+
+> “make it simpler”
+
+> “remove mushrooms”
+
+> “I don't want to buy anything”
+
+> “make this an air fryer recipe”
+
+> “actually, make me a dessert instead”
+
+AI never changes the recipe immediately.
+
+It first creates a **modification preview**:
+
+> − mushrooms
+> ↻ soy sauce → fish sauce
+> 25 min → 18 min
+> 3 missing ingredients → 0
+
+**[Cancel] [Use this version]**
+
+The user can also choose:
+
+**Create a new recipe**
+
+instead of modifying the current one.
+
+---
+
+### 4. Fridge
+
+Personal ingredient inventory.
+
+Categories:
+
+**Fridge · Freezer · Pantry**
+
+Each ingredient has:
+
+* Name
+* Optional quantity
+* Optional unit
+* Approximate availability
+* Optional expiry
+
+Quantity can be:
+
+**Exact:**
+`6 pieces · 500 ml · 300 g · 2 packs · custom`
+
+**Approximate:**
+`A little · Some · Plenty · Almost empty`
+
+Quantity is never required.
+
+---
+
+### 5. Ingredient Intelligence
+
+The AI uses Fridge information to decide what recipes are practical.
+
+Example:
+
+> **Milk — some**
+
+Instead of pretending there is an exact amount, AI can say:
+
+> “Probably enough.”
+
+Ingredient states:
+
+**Have · Running low · Missing · Want to buy**
+
+Region affects ingredient suggestions and substitutions.
+
+Example:
+
+> 🇮🇪 Ireland
+> → prioritize ingredients easy to find locally
+> → suggest alternatives for harder-to-find ingredients
+
+---
+
+### 6. Shopping / Want
+
+Missing ingredients can be added directly:
+
+**Recipe → Missing → Add to Want**
+
+Shopping list:
+
+* Add / remove
+* Mark bought
+
+When bought:
+
+**Want → Fridge**
+
+---
+
+### 7. Saved
+
+Personal recipe library.
+
+* Saved
+* Favorites
+* Want to try
+* Cooked
+
+Users can save both **original and AI-modified recipes**.
+
+---
+
+### 8. Cooking Mode
+
+Distraction-free step-by-step cooking.
+
+Method-specific instructions for:
+
+* Stovetop
+* Oven
+* Air Fryer
+* Microwave
+* No-cook
+
+Includes:
+
+**temperature · time · timer · quantities · substitutions**
+
+After cooking:
+
+> **Cooked ✓**
+
+Used ingredients can update the Fridge.
+
+---
+
+### 9. Food Types
+
+MVP supports:
+
+**Breakfast · Lunch · Dinner · Snack · Pastry · Dessert · Baking · Drinks**
+
+So 식 is a general **AI kitchen**, not only a meal planner.
+
+---
+
+### 10. Profile
+
+* Region
+* Preferred cuisines
+* Dietary preferences
+* Available appliances
+* Cooking preferences
+
+---
+
+# Navigation
+
+```text
+                 식
+
+Explore     Fridge     Saved     Profile
+   ⌂           🧊         ♡          ○
+```
+
+The **AI input is not a separate tab**. It floats above the navigation and adapts to the current screen.
+
+```text
+┌──────────────────────────────────┐
+│ ✦  tell 식 what you want...   ↑ │
+└──────────────────────────────────┘
+```
+
+---
+
+# Core UX
+
+```text
+DISCOVER
+   ↓
+RECIPE
+   ↓
+AI MODIFY / CREATE
+   ↓
+PREVIEW
+   ↓
+USER APPROVES
+   ↓
+FINAL RECIPE
+   ↓
+COOK
+   ↓
+FRIDGE UPDATED
+```
+
+### 식's core idea
+
+> **Cook with what you have.
+> Change it your way.**
+
+**Visual direction:** Korean Instagram-style minimalism — warm food photography, soft neutral background, generous whitespace, understated typography, rounded cards, subtle motion, and very little visual clutter.
