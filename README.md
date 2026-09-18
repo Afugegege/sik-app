@@ -1,55 +1,47 @@
-# 식 (sik)
+# sik (식)
 
-a korean minimalist cooking app and kitchen intelligence engine built with flutter.
+a quiet kitchen companion built with flutter.
 
-designed for people who care about how their everyday tools look and feel. soft warm tones, calm layouts, and zero visual noise. it turns whatever is sitting in your fridge into dinner, modifies recipes on the fly, and stays out of your way while you cook.
+made because i wanted an app for cooking that feels calm, looks good, and actually uses what's already sitting in my fridge. no walls of blog text or popups — just ingredients, match percentages, and simple recipe tweaks.
 
 ---
 
-### why
+### features
 
-most cooking apps feel like recipe blogs from 2011 wrapped in banner ads, stock photos, and ten paragraphs of backstory before you even see the ingredients.
-
-sik is built around a simpler premise: you already have ingredients in your fridge, you have specific appliances, and you just want to know what you can make right now without an extra grocery trip.
-
-### what's inside
-
-- discovery feed: visual recipe feed filtered by kitchen match percentage, prep time, and appliances (air fryer, stovetop, oven, microwave, no-cook).
-- fridge & pantry inventory: track ingredients, approximate quantities, and expiry status with dynamic matching against recipes.
-- ai recipe modification: swap missing ingredients, simplify steps, adjust servings, or convert cooking methods on the fly.
-- cook mode: clean step-by-step cooking view with integrated timers to keep you focused.
-- want list: automatically collects missing items from recipes you plan to make.
+- **fridge matching**: track what you have and see recipes you can make right now
+- **recipe tweaks**: adjust servings, swap ingredients you don't have, or convert cooking methods
+- **cook mode**: clean step-by-step view with built-in timers
+- **shopping list**: quick capture for missing ingredients
 
 ### stack
 
-- framework: flutter (dart 3)
-- state: provider
-- typography & design: google fonts (plus jakarta sans), custom ceramic theme
-- storage: shared preferences
-- ai: openai api
+- flutter & dart
+- provider for state
+- openai api for recipe adjustments
+- shared_preferences for local storage
 
-### run locally
+### setup
 
-prerequisites: flutter sdk (3.10+) and dart.
+prerequisites: flutter sdk (3.10+)
 
-1. clone the repo:
+1. clone the repo
 ```bash
 git clone https://github.com/Afugegege/sik-app.git
 cd sik-app
 ```
 
-2. install dependencies:
+2. get dependencies
 ```bash
 flutter pub get
 ```
 
-3. configure environment:
-copy `.env.example` to `.env` and add your api key:
+3. configure api key
+copy `.env.example` to `.env`:
 ```env
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-4. launch:
+4. run
 ```bash
 flutter run
 ```
