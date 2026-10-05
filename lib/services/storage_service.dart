@@ -88,6 +88,17 @@ class StorageService {
   }
 
   static const String _keyRecipeViewMode = 'sik_recipe_view_grid';
+  static const String _keyTrackQuantities = 'sik_track_quantities';
+
+  static Future<void> saveTrackQuantities(bool track) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyTrackQuantities, track);
+  }
+
+  static Future<bool?> loadTrackQuantities() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyTrackQuantities);
+  }
 
   static Future<void> saveRecipeViewMode(bool isGrid) async {
     final prefs = await SharedPreferences.getInstance();

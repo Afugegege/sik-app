@@ -56,6 +56,7 @@ class Recipe {
   final AiModificationDiff? diff;
   final String recipeSlot; // 'pantry_utility' | 'simple_classic' | 'aspirational'
   final String? inspirationNote; // Chef's tip or culinary mood note
+  final int servings; // Default 2 servings
 
   const Recipe({
     required this.id,
@@ -75,6 +76,7 @@ class Recipe {
     this.diff,
     this.recipeSlot = 'pantry_utility',
     this.inspirationNote,
+    this.servings = 2,
   });
 
   bool get hasImage => imageUrl.isNotEmpty;
@@ -157,6 +159,8 @@ class Recipe {
 
   int get missingIngredientsCount => ingredients.where((i) => i.status == 'missing').length;
 
+  String get servingsLabel => servings == 1 ? 'portion' : 'servings';
+
   bool get isPantryUtility => recipeSlot == 'pantry_utility';
   bool get isSimpleClassic => recipeSlot == 'simple_classic';
   bool get isAspirational => recipeSlot == 'aspirational';
@@ -179,6 +183,7 @@ class Recipe {
     AiModificationDiff? diff,
     String? recipeSlot,
     String? inspirationNote,
+    int? servings,
   }) {
     return Recipe(
       id: id ?? this.id,
@@ -198,6 +203,7 @@ class Recipe {
       diff: diff ?? this.diff,
       recipeSlot: recipeSlot ?? this.recipeSlot,
       inspirationNote: inspirationNote ?? this.inspirationNote,
+      servings: servings ?? this.servings,
     );
   }
 }

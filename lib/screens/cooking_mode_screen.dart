@@ -10,6 +10,7 @@ import '../providers/app_state.dart';
 import '../theme/app_theme.dart';
 import '../widgets/voice_message_dialog.dart';
 import '../widgets/circular_timer_dial.dart';
+import '../widgets/post_cooking_inventory_check_dialog.dart';
 
 class CookingModeScreen extends StatefulWidget {
   final Recipe? recipe;
@@ -244,77 +245,58 @@ class _CookingModeScreenState extends State<CookingModeScreen>
     }
   }
 
-  void _finishCookingFlow(BuildContext context) {
+  Future<void> _finishCookingFlow(BuildContext context) async {
     final appState = context.read<AppState>();
-    final accentColor = appState.accentColor;
     if (_activeRecipe != null) {
-      appState.addToCookedHistory(_activeRecipe!);
-    }
-    final dishTitle = _activeRecipe?.title ?? 'your freestyle meal';
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
+      final updated = await PostCookingInventoryCheckSheet.show(context, _activeRecipe!);
+      if (context.mounted) {
+        Navigator.pop(context);
+        if (updated == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✨ Plated ${_activeRecipe!.title}! Kitchen inventory & cooking record updated.'),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } else {
+      // Freestyle cooking session completion
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
           backgroundColor: appState.bgPrimary,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Column(
-            children: [
-              const Icon(Icons.check_circle_outline_rounded, size: 48, color: AppTheme.accentGreen),
-              const SizedBox(height: 10),
-              Text(
-                'Complete & Plated',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.textMain,
-                ),
-              ),
-            ],
+          title: Text(
+            'Cooking Session Done',
+            style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w700),
           ),
           content: Text(
-            'Delicious work making $dishTitle! Would you like to update your kitchen pantry status?',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              height: 1.5,
-              color: AppTheme.textMuted,
-            ),
-            textAlign: TextAlign.center,
+            'Great work in the kitchen! Ready to exit cooking mode?',
+            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppTheme.textMuted),
           ),
-          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: Text(
-                'Keep as is',
-                style: GoogleFonts.plusJakartaSans(color: AppTheme.textMuted, fontWeight: FontWeight.w600),
-              ),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
+                Navigator.pop(ctx);
                 Navigator.pop(context);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Pantry inventory updated for cooked recipe!')),
-                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: accentColor,
+                backgroundColor: appState.accentColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('Update Pantry', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+              child: const Text('Exit'),
             ),
           ],
-        );
-      },
-    );
+        ),
+      );
+    }
   }
 
   String _getApplianceTemp(String method) {
@@ -1083,7 +1065,9 @@ class _CookingModeScreenState extends State<CookingModeScreen>
                           border: Border.all(color: appState.bgSubtle),
                         ),
                         child: Text(
-                          _activeRecipe != null ? '식 · STUDIO' : 'FREESTYLE',
+                          _activeRecipe != null
+                              ? '식 · ${_activeRecipe!.servings} ${_activeRecipe!.servingsLabel.toUpperCase()}'
+                              : 'FREESTYLE',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 9.5,
                             fontWeight: FontWeight.w800,
@@ -2543,7 +2527,7 @@ class _CookingModeScreenState extends State<CookingModeScreen>
                     ),
                     Text(
                       _activeRecipe != null
-                          ? 'Step ${_currentStep + 1} of $totalSteps · $applianceTemp'
+                          ? 'Step ${_currentStep + 1} of $totalSteps · ${_activeRecipe!.servings} ${_activeRecipe!.servingsLabel} · $applianceTemp'
                           : '식 AI Sous-Chef & Tools Active',
                       style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppTheme.textMuted),
                     ),

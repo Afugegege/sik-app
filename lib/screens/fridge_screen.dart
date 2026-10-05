@@ -138,89 +138,115 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 16),
 
-                    // Quantity Mode Toggle
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => setModalState(() => selectedMode = QuantityMode.approximate),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: selectedMode == QuantityMode.approximate ? accentColor : appState.bgCard,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: selectedMode == QuantityMode.approximate ? accentColor : appState.bgSubtle),
-                            ),
-                            child: Text(
-                              'Approximate',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: selectedMode == QuantityMode.approximate ? FontWeight.w700 : FontWeight.w500,
-                                color: selectedMode == QuantityMode.approximate ? Colors.white : AppTheme.textMain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        GestureDetector(
-                          onTap: () => setModalState(() => selectedMode = QuantityMode.exact),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: selectedMode == QuantityMode.exact ? accentColor : appState.bgCard,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: selectedMode == QuantityMode.exact ? accentColor : appState.bgSubtle),
-                            ),
-                            child: Text(
-                              'Exact',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: selectedMode == QuantityMode.exact ? FontWeight.w700 : FontWeight.w500,
-                                color: selectedMode == QuantityMode.exact ? Colors.white : AppTheme.textMain,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    if (selectedMode == QuantityMode.approximate) ...[
-                      Wrap(
-                        spacing: 6,
-                        children: ['A little', 'Some', 'Plenty', 'Almost empty'].map((opt) {
-                          final isSel = quantityController.text == opt;
-                          return GestureDetector(
-                            onTap: () => setModalState(() => quantityController.text = opt),
+                    if (appState.trackQuantities) ...[
+                      // Quantity Mode Toggle
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => setModalState(() => selectedMode = QuantityMode.approximate),
                             child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: isSel ? accentColor : appState.bgCard,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: isSel ? accentColor : appState.bgSubtle),
+                                color: selectedMode == QuantityMode.approximate ? accentColor : appState.bgCard,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: selectedMode == QuantityMode.approximate ? accentColor : appState.bgSubtle),
                               ),
                               child: Text(
-                                opt,
+                                'Approximate',
                                 style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 11.5,
-                                  fontWeight: isSel ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSel ? Colors.white : AppTheme.textMain,
+                                  fontSize: 12,
+                                  fontWeight: selectedMode == QuantityMode.approximate ? FontWeight.w700 : FontWeight.w500,
+                                  color: selectedMode == QuantityMode.approximate ? Colors.white : AppTheme.textMain,
                                 ),
                               ),
                             ),
-                          );
-                        }).toList(),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () => setModalState(() => selectedMode = QuantityMode.exact),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: selectedMode == QuantityMode.exact ? accentColor : appState.bgCard,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: selectedMode == QuantityMode.exact ? accentColor : appState.bgSubtle),
+                              ),
+                              child: Text(
+                                'Exact',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: selectedMode == QuantityMode.exact ? FontWeight.w700 : FontWeight.w500,
+                                  color: selectedMode == QuantityMode.exact ? Colors.white : AppTheme.textMain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 8),
+
+                      if (selectedMode == QuantityMode.approximate) ...[
+                        Wrap(
+                          spacing: 6,
+                          children: ['A little', 'Some', 'Plenty', 'Almost empty'].map((opt) {
+                            final isSel = quantityController.text == opt;
+                            return GestureDetector(
+                              onTap: () => setModalState(() => quantityController.text = opt),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: isSel ? accentColor : appState.bgCard,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: isSel ? accentColor : appState.bgSubtle),
+                                ),
+                                child: Text(
+                                  opt,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11.5,
+                                    fontWeight: isSel ? FontWeight.w700 : FontWeight.w500,
+                                    color: isSel ? Colors.white : AppTheme.textMain,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ] else ...[
+                        TextField(
+                          controller: quantityController,
+                          decoration: InputDecoration(
+                            hintText: 'e.g. 500 ml, 300 g, 6 pieces',
+                            filled: true,
+                            fillColor: AppTheme.bgSurface,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                        ),
+                      ],
                     ] else ...[
-                      TextField(
-                        controller: quantityController,
-                        decoration: InputDecoration(
-                          hintText: 'e.g. 500 ml, 300 g, 6 pieces',
-                          filled: true,
-                          fillColor: AppTheme.bgSurface,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                      // Checklist Mode banner
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: appState.bgSubtle.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.checklist_rounded, size: 15, color: AppTheme.textMuted),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Checklist Mode: Quantities optional (added instantly without measuring).',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11.5,
+                                  color: AppTheme.textMuted,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -234,12 +260,13 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                         onPressed: () {
                           final name = nameController.text.trim();
                           if (name.isNotEmpty) {
+                            final qText = quantityController.text.trim();
                             final newItem = FridgeItem(
                               id: 'f_${DateTime.now().millisecondsSinceEpoch}',
                               name: name,
                               location: selectedLoc,
                               quantityMode: selectedMode,
-                              quantityDisplay: quantityController.text.trim(),
+                              quantityDisplay: qText.isNotEmpty ? qText : (appState.trackQuantities ? 'Some' : 'Some'),
                               status: selectedStatus,
                             );
                             context.read<AppState>().addFridgeItem(newItem);
@@ -421,6 +448,43 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                         label: Text('${appState.wantList.length}'),
                         backgroundColor: accentColor,
                         child: const Icon(Icons.shopping_cart_outlined, color: AppTheme.textMain, size: 21),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    // Quantity Tracking Toggle Button
+                    IconButton(
+                      tooltip: appState.trackQuantities
+                          ? 'Quantities ON (Tap to switch to simple checklist)'
+                          : 'Checklist Mode (Tap to track quantities)',
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        appState.toggleTrackQuantities();
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              appState.trackQuantities
+                                  ? 'Quantity tracking active. Exact & approximate amounts shown.'
+                                  : 'Checklist mode active. Quantities hidden but safely preserved.',
+                            ),
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: appState.trackQuantities ? accentColor.withValues(alpha: 0.12) : appState.bgSubtle,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          appState.trackQuantities ? Icons.scale_rounded : Icons.checklist_rounded,
+                          size: 16,
+                          color: appState.trackQuantities ? accentColor : AppTheme.textMuted,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),

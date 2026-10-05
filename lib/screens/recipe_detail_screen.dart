@@ -5,10 +5,11 @@ import '../models/recipe.dart';
 import '../providers/app_state.dart';
 import '../services/recipe_taste_evaluator.dart';
 import '../services/recipe_step_adapter.dart';
+import '../services/servings_scaler.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ai_modification_modal.dart';
+import '../widgets/cooking_formulation_dialog.dart';
 import '../widgets/photo_action_sheet.dart';
-import 'cooking_mode_screen.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
@@ -28,6 +29,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool _isEnhancingDetail = false;
   bool _isDetailEnhanced = false;
   List<String>? _enhancedSteps;
+  late int _selectedServings;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedServings = widget.recipe.servings <= 0 ? 2 : widget.recipe.servings;
+  }
 
   /// Enhances brief flash-generated recipe steps into detailed, serious cooking instructions.
   /// Adds specific temperatures, exact timings, technique cues, and sensory checkpoints.
@@ -850,10 +858,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               _detailMetaChip(context, Icons.timer_outlined, '${currentRecipe.cookingTimeMinutes} mins'),
                               _detailMetaChip(context, Icons.soup_kitchen_outlined, currentRecipe.cookingMethod),
                               _detailMetaChip(context, Icons.bar_chart_rounded, currentRecipe.difficulty),
+                              _detailMetaChip(context, Icons.people_outline_rounded, '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}'),
                             ],
                           ),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 18),
+                          _buildServingsSelectorCard(context, currentRecipe, appState, accentColor),
+                          const SizedBox(height: 20),
 
                           // Ingredients Header + Add Missing to Want Button
                           Row(
@@ -918,64 +929,68 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           // Instructions Section
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Instructions',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppTheme.textMain,
-                                    ),
-                                  ),
-                                  if (adaptedSteps.any((s) => s.isAdapted)) ...[
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                                      decoration: BoxDecoration(
-                                        color: appState.bgSubtle,
-                                        borderRadius: BorderRadius.circular(8),
+                              Expanded(
+                                child: Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  children: [
+                                    Text(
+                                      'Instructions',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppTheme.textMain,
                                       ),
-                                      child: Text(
-                                        'Adapted',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 10.5,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppTheme.textMuted,
+                                    ),
+                                    if (adaptedSteps.any((s) => s.isAdapted))
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                        decoration: BoxDecoration(
+                                          color: appState.bgSubtle,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          'Adapted',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.textMuted,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                  if (_isDetailEnhanced) ...[
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                                      decoration: BoxDecoration(
-                                        color: accentColor.withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.auto_awesome, size: 10, color: accentColor),
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            'Enhanced',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 10.5,
-                                              fontWeight: FontWeight.w700,
-                                              color: accentColor,
+                                    if (_isDetailEnhanced)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                        decoration: BoxDecoration(
+                                          color: accentColor.withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.auto_awesome, size: 10, color: accentColor),
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              'Enhanced',
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 10.5,
+                                                fontWeight: FontWeight.w700,
+                                                color: accentColor,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
                                   ],
-                                ],
+                                ),
                               ),
-                              if (!_isDetailEnhanced)
+                              if (!_isDetailEnhanced) ...[
+                                const SizedBox(width: 8),
                                 _buildEnhanceDetailButton(accentColor, currentRecipe),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 12),
@@ -1182,6 +1197,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                       _detailMetaChip(context, Icons.timer_outlined, '${currentRecipe.cookingTimeMinutes} mins'),
                                       _detailMetaChip(context, Icons.soup_kitchen_outlined, currentRecipe.cookingMethod),
                                       _detailMetaChip(context, Icons.bar_chart_rounded, currentRecipe.difficulty),
+                                      _detailMetaChip(context, Icons.people_outline_rounded, '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}'),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
@@ -1271,6 +1287,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          _buildServingsSelectorCard(context, currentRecipe, appState, accentColor),
+                          const SizedBox(height: 18),
                           // Ingredients Header
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1709,7 +1727,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     if (ing.amount != null) ...[
                       const SizedBox(width: 5),
                       Text(
-                        '• ${ing.amount}',
+                        '• ${ServingsScaler.scaleAmount(ing.amount, widget.recipe.servings <= 0 ? 2 : widget.recipe.servings, _selectedServings)}',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -2052,15 +2070,187 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       return ing;
     }).where((ing) => !_removedIngredients.contains(ing.name) || _substitutions.containsKey(ing.name)).toList();
 
+    final baseServings = currentRecipe.servings <= 0 ? 2 : currentRecipe.servings;
+    final scaledIngredients = effectiveIngredients.map((ing) {
+      if (ing.amount == null || ing.amount!.isEmpty) return ing;
+      final scaledAmount = ServingsScaler.scaleAmount(
+        ing.amount,
+        baseServings,
+        _selectedServings,
+      );
+      return RecipeIngredient(
+        name: ing.name,
+        amount: scaledAmount,
+        status: ing.status,
+      );
+    }).toList();
+
     final cookRecipe = currentRecipe.copyWith(
-      ingredients: effectiveIngredients,
+      servings: _selectedServings,
+      ingredients: scaledIngredients,
       cookingSteps: adaptedSteps.where((s) => !s.isSkipped).map((s) => s.adaptedText).toList(),
     );
 
-    Navigator.push(
+    CookingFormulationDialog.startCookingWithFormulation(
       context,
-      MaterialPageRoute(
-        builder: (context) => CookingModeScreen(recipe: cookRecipe),
+      cookRecipe,
+      servings: _selectedServings,
+    );
+  }
+
+  Widget _buildServingsSelectorCard(
+    BuildContext context,
+    Recipe currentRecipe,
+    AppState appState,
+    Color accentColor,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: appState.bgCard,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: appState.bgSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.people_alt_outlined, size: 18, color: accentColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Portions & Servings',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textMain,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: accentColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Ingredient measurements scale dynamically to your target portion.',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 11.5,
+              color: AppTheme.textMuted,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.bgSurface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: appState.bgSubtle),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_rounded, size: 18),
+                      visualDensity: VisualDensity.compact,
+                      splashRadius: 18,
+                      onPressed: _selectedServings > 1
+                          ? () => setState(() => _selectedServings--)
+                          : null,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        '$_selectedServings',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.textMain,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      visualDensity: VisualDensity.compact,
+                      splashRadius: 18,
+                      onPressed: _selectedServings < 12
+                          ? () => setState(() => _selectedServings++)
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildPortionChip(1, '1 (Solo)', accentColor, appState),
+                    const SizedBox(width: 6),
+                    _buildPortionChip(2, '2 (Standard)', accentColor, appState),
+                    const SizedBox(width: 6),
+                    _buildPortionChip(4, '4 (Family)', accentColor, appState),
+                    const SizedBox(width: 6),
+                    _buildPortionChip(6, '6 (Party)', accentColor, appState),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPortionChip(int count, String label, Color accentColor, AppState appState) {
+    final isSelected = _selectedServings == count;
+    return InkWell(
+      onTap: () => setState(() => _selectedServings = count),
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected ? accentColor : AppTheme.bgSurface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? accentColor : appState.bgSubtle,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? Colors.white : AppTheme.textMain,
+          ),
+        ),
       ),
     );
   }

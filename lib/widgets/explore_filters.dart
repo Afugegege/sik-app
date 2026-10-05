@@ -18,6 +18,7 @@ class ExploreFilters extends StatelessWidget {
     'All',
     'Cook with what you have',
     'Almost there',
+    'Need Groceries',
     'Easy to find near you',
     'Quick & Simple',
     'Pastry & Dessert',
@@ -36,6 +37,9 @@ class ExploreFilters extends StatelessWidget {
 
   static IconData getCategoryIcon(String cat) {
     final lower = cat.toLowerCase();
+    if (lower.contains('need groceries') || lower.contains('grocer')) {
+      return Icons.shopping_cart_outlined;
+    }
     if (lower.contains('dessert') || lower.contains('pastry')) {
       return Icons.icecream_rounded;
     }

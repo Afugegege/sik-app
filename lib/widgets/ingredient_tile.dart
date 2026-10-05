@@ -132,70 +132,100 @@ class _IngredientTileState extends State<IngredientTile> {
                     ),
                     const SizedBox(height: 14),
 
-                    // Quantity Mode Segment
-                    Row(
-                      children: [
-                        Text('Quantity Mode:', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
-                        const SizedBox(width: 12),
-                        GestureDetector(
-                          onTap: () => setModalState(() => selectedMode = QuantityMode.approximate),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: selectedMode == QuantityMode.approximate ? AppTheme.textMain : appState.bgCard,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: selectedMode == QuantityMode.approximate ? AppTheme.textMain : appState.bgSubtle),
-                            ),
-                            child: Text(
-                              'Approximate',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: selectedMode == QuantityMode.approximate ? FontWeight.w700 : FontWeight.w500,
-                                color: selectedMode == QuantityMode.approximate ? Colors.white : AppTheme.textMain,
+                    if (!appState.trackQuantities) ...[
+                      // Note that background quantity is preserved
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: appState.bgSubtle.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded, size: 14, color: AppTheme.textMuted),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                currentItem.quantityDisplay?.isNotEmpty == true
+                                    ? 'Saved background quantity: "${currentItem.quantityDisplay}" (Kept safe)'
+                                    : 'Quantity tracking is currently off. Saved in background.',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11.5,
+                                  color: AppTheme.textMuted,
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        GestureDetector(
-                          onTap: () => setModalState(() => selectedMode = QuantityMode.exact),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: selectedMode == QuantityMode.exact ? AppTheme.textMain : appState.bgCard,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: selectedMode == QuantityMode.exact ? AppTheme.textMain : appState.bgSubtle),
-                            ),
-                            child: Text(
-                              'Exact',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: selectedMode == QuantityMode.exact ? FontWeight.w700 : FontWeight.w500,
-                                color: selectedMode == QuantityMode.exact ? Colors.white : AppTheme.textMain,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-
-                    // Quantity Value Input
-                    TextField(
-                      controller: quantityController,
-                      decoration: InputDecoration(
-                        labelText: selectedMode == QuantityMode.exact ? 'Quantity (e.g. 500g, 2 packs)' : 'Approximate Level (e.g. Plenty, Low)',
-                        hintText: selectedMode == QuantityMode.exact ? '500g' : 'Plenty',
-                        filled: true,
-                        fillColor: AppTheme.bgSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: AppTheme.bgSubtle),
+                          ],
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 14),
+                    ] else ...[
+                      // Quantity Mode Segment
+                      Row(
+                        children: [
+                          Text('Quantity Mode:', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () => setModalState(() => selectedMode = QuantityMode.approximate),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: selectedMode == QuantityMode.approximate ? AppTheme.textMain : appState.bgCard,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: selectedMode == QuantityMode.approximate ? AppTheme.textMain : appState.bgSubtle),
+                              ),
+                              child: Text(
+                                'Approximate',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: selectedMode == QuantityMode.approximate ? FontWeight.w700 : FontWeight.w500,
+                                  color: selectedMode == QuantityMode.approximate ? Colors.white : AppTheme.textMain,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () => setModalState(() => selectedMode = QuantityMode.exact),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: selectedMode == QuantityMode.exact ? AppTheme.textMain : appState.bgCard,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: selectedMode == QuantityMode.exact ? AppTheme.textMain : appState.bgSubtle),
+                              ),
+                              child: Text(
+                                'Exact',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: selectedMode == QuantityMode.exact ? FontWeight.w700 : FontWeight.w500,
+                                  color: selectedMode == QuantityMode.exact ? Colors.white : AppTheme.textMain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Quantity Value Input
+                      TextField(
+                        controller: quantityController,
+                        decoration: InputDecoration(
+                          labelText: selectedMode == QuantityMode.exact ? 'Quantity (e.g. 500g, 2 packs)' : 'Approximate Level (e.g. Plenty, Low)',
+                          hintText: selectedMode == QuantityMode.exact ? '500g' : 'Plenty',
+                          filled: true,
+                          fillColor: AppTheme.bgSurface,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: AppTheme.bgSubtle),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
                     const SizedBox(height: 14),
 
                     // Status Picker
@@ -246,7 +276,9 @@ class _IngredientTileState extends State<IngredientTile> {
                                 name: nameController.text.trim(),
                                 location: selectedLoc,
                                 quantityMode: selectedMode,
-                                quantityDisplay: quantityController.text.trim(),
+                                quantityDisplay: appState.trackQuantities
+                                    ? quantityController.text.trim()
+                                    : currentItem.quantityDisplay,
                                 status: selectedStatus,
                               );
                               context.read<AppState>().updateFridgeItem(updated);
@@ -454,7 +486,9 @@ class _IngredientTileState extends State<IngredientTile> {
                                   ),
                                   const SizedBox(height: 1),
                                   Text(
-                                    fuzzyNote,
+                                    appState.trackQuantities
+                                        ? fuzzyNote
+                                        : '${item.location.name.toUpperCase()} · ${item.status}',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 11.5,
                                       fontWeight: FontWeight.w500,
@@ -473,11 +507,31 @@ class _IngredientTileState extends State<IngredientTile> {
                   ),
                 ),
 
-                // 3. Quantity Scrubber Badge (Completely OUTSIDE any Draggable tree!)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(2, 8, 10, 8),
-                  child: QuantityScrubberBadge(item: item),
-                ),
+                // 3. Quantity Scrubber Badge or Checklist Status Pill
+                if (appState.trackQuantities)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(2, 8, 10, 8),
+                    child: QuantityScrubberBadge(item: item),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(2, 8, 12, 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: statusBgColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        item.status,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: statusColor,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
 

@@ -39,6 +39,22 @@ class AppState extends ChangeNotifier {
   // Floating Random Recipe Picker visibility (can be closed and reopened)
   bool _isRandomPickerVisible = true;
 
+  // Inventory Quantity Tracking Toggle (User preference: ON or OFF)
+  // When OFF, quantities are hidden from UI to reduce friction, but retained safely in background.
+  bool _trackQuantities = true;
+  bool get trackQuantities => _trackQuantities;
+
+  void setTrackQuantities(bool value) {
+    if (_trackQuantities == value) return;
+    _trackQuantities = value;
+    StorageService.saveTrackQuantities(value);
+    notifyListeners();
+  }
+
+  void toggleTrackQuantities() {
+    setTrackQuantities(!_trackQuantities);
+  }
+
   // AI Interactive Follow-up Session State
   AiFollowUpSession? _aiFollowUpSession;
 
@@ -182,6 +198,11 @@ class AppState extends ChangeNotifier {
       _isRecipeGridView = savedViewMode;
     }
 
+    final savedTrackQuantities = await StorageService.loadTrackQuantities();
+    if (savedTrackQuantities != null) {
+      _trackQuantities = savedTrackQuantities;
+    }
+
     // Load saved kitchen inventory memory
     final savedFridge = await StorageService.loadFridgeItems();
     if (savedFridge != null) {
@@ -284,7 +305,7 @@ class AppState extends ChangeNotifier {
     }
     return _recipes
         .map((r) => _resolveRecipeWithInventory(r))
-        .where((r) => r.isSaved || r.isAspirational || r.isSimpleClassic || r.kitchenMatchPercent > 0)
+        .where((r) => r.isSaved || r.isAspirational || r.isSimpleClassic || r.kitchenMatchPercent > 0 || r.missingIngredientsCount > 0)
         .toList();
   }
 
@@ -410,13 +431,13 @@ class AppState extends ChangeNotifier {
       }
     }
 
-    // 3. SLOT C: Aspirational Discovery (2 inspiring dishes worth picking up 1-2 items for)
+    // 3. SLOT C: Aspirational & Grocery Inspiration Discovery (inspiring dishes worth getting groceries for)
     final aspirationalCandidates = MockData.discoveryCatalog.where((d) {
       final t = d.title.toLowerCase().trim();
       return !existingTitles.contains(t) && !existingIds.contains(d.id);
     }).map((d) => _resolveRecipeWithInventory(d)).toList();
 
-    for (final asp in aspirationalCandidates.take(2)) {
+    for (final asp in aspirationalCandidates.take(6)) {
       final t = asp.title.toLowerCase().trim();
       existingTitles.add(t);
       existingIds.add(asp.id);
@@ -740,6 +761,9 @@ class AppState extends ChangeNotifier {
       if (_selectedFilter == 'Almost there') {
         return recipe.kitchenMatchPercent >= 50 && recipe.kitchenMatchPercent < 75;
       }
+      if (_selectedFilter == 'Need Groceries') {
+        return recipe.missingIngredientsCount > 0 || recipe.recipeSlot == 'aspirational';
+      }
       if (_selectedFilter != 'All' && recipe.category != _selectedFilter) {
         return false;
       }
@@ -774,7 +798,14 @@ class AppState extends ChangeNotifier {
         break;
       case 'match':
       default:
-        if (_fridgeItems.isNotEmpty) {
+        if (_selectedFilter == 'Need Groceries') {
+          // In Need Groceries view, prioritize recipes that need fewest items or have great match potential
+          list.sort((a, b) {
+            final cmp = a.missingIngredientsCount.compareTo(b.missingIngredientsCount);
+            if (cmp != 0) return cmp;
+            return b.kitchenMatchPercent.compareTo(a.kitchenMatchPercent);
+          });
+        } else if (_fridgeItems.isNotEmpty) {
           list.sort((a, b) {
             final slotWeightA = a.isPantryUtility ? 0 : (a.isSimpleClassic ? 1 : 2);
             final slotWeightB = b.isPantryUtility ? 0 : (b.isSimpleClassic ? 1 : 2);
@@ -786,6 +817,7 @@ class AppState extends ChangeNotifier {
         }
         break;
     }
+
     return list;
   }
 
@@ -1190,6 +1222,58 @@ class AppState extends ChangeNotifier {
 
   void addToCookedHistory(Recipe recipe) {
     _cookedHistory.insert(0, recipe);
+    notifyListeners();
+  }
+
+  /// Applies post-cooking deductions & status updates across inventory,
+  /// adds depleted or requested items to shopping list, and logs the cooking record.
+  void applyPostCookingInventoryUpdate({
+    required Recipe recipe,
+    required List<FridgeItem> updatedItems,
+    required List<String> depletedItemIdsToRemove,
+    required List<String> itemsToAddToWantList,
+    String? cookingNotes,
+    int rating = 5,
+  }) {
+    // 1. Update fridge items that had deductions or status changes
+    for (final updated in updatedItems) {
+      final idx = _fridgeItems.indexWhere((f) => f.id == updated.id);
+      if (idx != -1) {
+        _fridgeItems[idx] = updated;
+      }
+    }
+
+    // 2. Remove items that were marked as completely depleted/finished (if requested)
+    if (depletedItemIdsToRemove.isNotEmpty) {
+      _fridgeItems.removeWhere((f) => depletedItemIdsToRemove.contains(f.id));
+    }
+
+    _saveFridgeItemsToStorage();
+
+    // 3. Add any depleted or missing items to Want/Shopping list
+    if (itemsToAddToWantList.isNotEmpty) {
+      addMultipleToWantList(itemsToAddToWantList);
+    }
+
+    // 4. Record to Cooked History
+    addToCookedHistory(recipe);
+
+    // 5. Add to Cooking Records / Calendar Journal
+    addCookingRecord(
+      CookingRecord(
+        id: 'cr_${DateTime.now().millisecondsSinceEpoch}',
+        recipeTitle: recipe.title,
+        koreanTitle: recipe.koreanTitle,
+        date: DateTime.now(),
+        photoUrl: recipe.imageUrl,
+        rating: rating,
+        notes: cookingNotes ?? 'Cooked with kitchen ingredients. Inventory updated.',
+        tags: [recipe.cookingMethod, recipe.difficulty, if (recipe.category.isNotEmpty) recipe.category],
+      ),
+    );
+
+    _syncSynthesizedRecipes();
+    _autoCheckAndSurfaceUnlockedRecipes();
     notifyListeners();
   }
 

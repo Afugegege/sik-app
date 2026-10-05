@@ -104,6 +104,8 @@ class ProfileScreen extends StatelessWidget {
                                       children: [
                                         _buildAccentThemeCard(context, appState),
                                         const SizedBox(height: 16),
+                                        _buildQuantityTrackingCard(context, appState),
+                                        const SizedBox(height: 16),
                                         _buildRegionCard(context, appState),
                                         const SizedBox(height: 16),
                                         _buildAppliancesCard(context, appState),
@@ -135,6 +137,8 @@ class ProfileScreen extends StatelessWidget {
                       : SliverList(
                           delegate: SliverChildListDelegate([
                             _buildAccentThemeCard(context, appState),
+                            const SizedBox(height: 16),
+                            _buildQuantityTrackingCard(context, appState),
                             const SizedBox(height: 16),
                             _buildRegionCard(context, appState),
                             const SizedBox(height: 16),
@@ -636,6 +640,70 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Section: Inventory Quantity Tracking Setting ───────────────────────────
+  Widget _buildQuantityTrackingCard(BuildContext context, AppState appState) {
+    return _sectionCard(
+      context: context,
+      title: 'Inventory Quantity Tracking',
+      subtitle: 'Choose between tracking exact quantities or running a minimal checklist',
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: appState.bgPrimary,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: appState.bgSubtle),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: appState.accentColor.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                appState.trackQuantities ? Icons.scale_rounded : Icons.checklist_rounded,
+                color: appState.accentColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Track Quantities in Inventory',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textMain,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    appState.trackQuantities
+                        ? 'Quantities & scrubbers shown on pantry items.'
+                        : 'Checklist mode active. Saved quantities are preserved in background.',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11.5,
+                      color: AppTheme.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Switch.adaptive(
+              value: appState.trackQuantities,
+              activeTrackColor: appState.accentColor,
+              onChanged: (val) => appState.setTrackQuantities(val),
+            ),
+          ],
+        ),
       ),
     );
   }

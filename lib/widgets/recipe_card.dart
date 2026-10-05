@@ -5,6 +5,7 @@ import '../theme/app_theme.dart';
 import '../providers/app_state.dart';
 import '../models/recipe.dart';
 import '../screens/recipe_detail_screen.dart';
+import 'cooking_formulation_dialog.dart';
 import 'photo_action_sheet.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -30,6 +31,41 @@ class RecipeCard extends StatelessWidget {
   }
 
   Widget _buildSlotBadge(AppState appState, {bool isGrid = false, bool onImage = false}) {
+    if (recipe.category == 'Need Groceries' || appState.selectedFilter == 'Need Groceries' || (recipe.missingIngredientsCount > 0 && recipe.kitchenMatchPercent < 75)) {
+      const color = Color(0xFFD97706);
+      final bgColor = onImage ? Colors.white.withValues(alpha: 0.94) : const Color(0xFFFEF3C7);
+      final label = isGrid
+          ? '🛒 ${recipe.missingIngredientsCount} to get'
+          : '🛒 Grocery Run · ${recipe.missingIngredientsCount} to get';
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: isGrid ? 7 : 10, vertical: isGrid ? 3.5 : 4.5),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(isGrid ? (onImage ? 8 : 10) : 12),
+          border: onImage ? null : Border.all(color: const Color(0xFFFDE68A), width: 0.8),
+          boxShadow: onImage ? const [BoxShadow(color: Color(0x15000000), blurRadius: 4)] : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: isGrid ? 9.5 : 11,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (recipe.isSimpleClassic) {
       final color = appState.accentColor;
       final bgColor = onImage ? Colors.white.withValues(alpha: 0.94) : appState.accentColor.withValues(alpha: 0.12);
@@ -451,6 +487,12 @@ class RecipeCard extends StatelessWidget {
                         recipe.difficulty,
                         appState,
                       ),
+                      _buildPillChip(
+                        context,
+                        Icons.people_outline_rounded,
+                        '${recipe.servings} ${recipe.servingsLabel}',
+                        appState,
+                      ),
                       if (recipe.ingredients.isNotEmpty)
                         _buildPillChip(
                           context,
@@ -460,6 +502,117 @@ class RecipeCard extends StatelessWidget {
                         ),
                     ],
                   ),
+
+                  const SizedBox(height: 14),
+
+                  // Quick Action Buttons: Preview & Start Cooking (with Formulation)
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RecipeDetailScreen(recipe: recipe),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.menu_book_outlined, size: 14),
+                        label: Text(
+                          'Preview',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppTheme.textMain,
+                          side: BorderSide(color: appState.bgSubtle),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          CookingFormulationDialog.startCookingWithFormulation(
+                            context,
+                            recipe,
+                            servings: recipe.servings,
+                          );
+                        },
+                        icon: const Icon(Icons.soup_kitchen_rounded, size: 14),
+                        label: Text(
+                          'Start Cooking',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: appState.accentColor,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // 1-Tap Add Missing Items to Grocery List Action
+                  if (recipe.missingIngredientsCount > 0) ...[
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        final missingNames = recipe.ingredients
+                            .where((i) => i.status == 'missing')
+                            .map((i) => i.name)
+                            .toList();
+                        if (missingNames.isNotEmpty) {
+                          appState.addMultipleToWantList(missingNames);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('🛒 Added ${missingNames.length} missing items to Shopping List!'),
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: appState.accentColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: appState.accentColor.withValues(alpha: 0.25)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add_shopping_cart_rounded, size: 14, color: appState.accentColor),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                'Need ${recipe.missingIngredientsCount} groceries • Add to List',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: appState.accentColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -736,16 +889,36 @@ class RecipeCard extends StatelessWidget {
               color: AppTheme.textMuted,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 5),
           Container(
-            width: 3,
-            height: 3,
+            width: 2.5,
+            height: 2.5,
             decoration: const BoxDecoration(
               color: AppTheme.textLight,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 5),
+          const Icon(Icons.people_outline_rounded, size: 11, color: AppTheme.textMuted),
+          const SizedBox(width: 3),
+          Text(
+            '${recipe.servings}p',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textMuted,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Container(
+            width: 2.5,
+            height: 2.5,
+            decoration: const BoxDecoration(
+              color: AppTheme.textLight,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 5),
           Icon(_getMethodIcon(recipe.cookingMethod), size: 11, color: AppTheme.textMuted),
           const SizedBox(width: 3),
           Flexible(
