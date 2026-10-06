@@ -684,45 +684,71 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
         backgroundColor: appState.bgPrimary,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Row(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.calendar_month_rounded, size: 22, color: accentColor),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Journal',
+                  '식',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: AppTheme.textMain,
-                    letterSpacing: -0.5,
+                    color: accentColor,
+                    letterSpacing: -0.6,
                   ),
                 ),
+                const SizedBox(width: 6),
                 Text(
-                  'Meal Journal · Reminders',
+                  'JOURNAL',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: AppTheme.textLight,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textMain,
+                    letterSpacing: 2.0,
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 1),
+            Text(
+              'Meal records · Cooking reminders',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w500,
+                color: AppTheme.textMuted,
+              ),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_task_rounded, color: accentColor),
             tooltip: 'Add reminder',
             onPressed: () => _showAddReminderDialog(context),
+            icon: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: appState.bgCard,
+                shape: BoxShape.circle,
+                border: Border.all(color: appState.bgSubtle, width: 0.8),
+              ),
+              child: Icon(Icons.add_task_rounded, size: 16, color: accentColor),
+            ),
           ),
           IconButton(
-            icon: Icon(Icons.add_photo_alternate_rounded, color: accentColor),
             tooltip: 'Record meal',
             onPressed: () => _showAddRecordDialog(context),
+            icon: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: accentColor,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add_a_photo_outlined, size: 16, color: Colors.white),
+            ),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: isTablet
@@ -965,11 +991,12 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                 child: Container(
-                  height: 44,
-                  padding: const EdgeInsets.all(4),
+                  height: 42,
+                  padding: const EdgeInsets.all(3.5),
                   decoration: BoxDecoration(
                     color: appState.bgCard,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: appState.bgSubtle, width: 0.8),
                   ),
                   child: TabBar(
                     controller: _tabController,
@@ -977,14 +1004,15 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicator: BoxDecoration(
                       color: AppTheme.bgSurface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
-                        BoxShadow(color: Color(0x0A000000), blurRadius: 4),
+                        BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1.5)),
                       ],
                     ),
                     labelColor: AppTheme.textMain,
                     unselectedLabelColor: AppTheme.textMuted,
-                    labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
+                    labelStyle: GoogleFonts.plusJakartaSans(fontSize: 12.5, fontWeight: FontWeight.w700),
+                    unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 12.5, fontWeight: FontWeight.w500),
                     tabs: const [
                       Tab(text: 'Cooked Journal'),
                       Tab(text: 'Cooking Reminders'),
@@ -1030,7 +1058,7 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
               Text(
                 _formatMonthYear(_selectedDate),
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: AppTheme.textMain,
                 ),
@@ -1038,7 +1066,8 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.chevron_left_rounded),
+                    icon: const Icon(Icons.chevron_left_rounded, size: 20),
+                    visualDensity: VisualDensity.compact,
                     onPressed: () {
                       setState(() {
                         _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, _selectedDate.day);
@@ -1046,7 +1075,8 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.chevron_right_rounded),
+                    icon: const Icon(Icons.chevron_right_rounded, size: 20),
+                    visualDensity: VisualDensity.compact,
                     onPressed: () {
                       setState(() {
                         _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, _selectedDate.day);
@@ -1061,7 +1091,7 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
 
         // 2. Horizontal Calendar Date Strip
         SizedBox(
-          height: 72,
+          height: 68,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1073,17 +1103,18 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
 
         // 3. Tab Bar
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
-            height: 44,
-            padding: const EdgeInsets.all(4),
+            height: 42,
+            padding: const EdgeInsets.all(3.5),
             decoration: BoxDecoration(
               color: appState.bgCard,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: appState.bgSubtle, width: 0.8),
             ),
             child: TabBar(
               controller: _tabController,
@@ -1091,14 +1122,15 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 color: AppTheme.bgSurface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: const [
-                  BoxShadow(color: Color(0x0A000000), blurRadius: 4),
+                  BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1.5)),
                 ],
               ),
               labelColor: AppTheme.textMain,
               unselectedLabelColor: AppTheme.textMuted,
-              labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
+              labelStyle: GoogleFonts.plusJakartaSans(fontSize: 12.5, fontWeight: FontWeight.w700),
+              unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 12.5, fontWeight: FontWeight.w500),
               tabs: const [
                 Tab(text: 'Cooked Journal'),
                 Tab(text: 'Cooking Reminders'),
@@ -1134,18 +1166,19 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        width: 52,
-        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        width: 50,
+        margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
         decoration: BoxDecoration(
           color: isSelected ? accentColor : appState.bgCard,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? accentColor : Colors.transparent,
+            color: isSelected ? accentColor : appState.bgSubtle,
+            width: 0.8,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: accentColor.withValues(alpha: 0.35),
+                    color: accentColor.withValues(alpha: 0.28),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -1156,14 +1189,15 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _formatDayName(date.weekday),
+              _formatDayName(date.weekday).toUpperCase(),
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
                 color: isSelected ? Colors.white70 : AppTheme.textMuted,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 3),
             Text(
               '${date.day}',
               style: GoogleFonts.plusJakartaSans(
@@ -1172,14 +1206,14 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
                 color: isSelected ? Colors.white : AppTheme.textMain,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (hasRecords)
                   Container(
-                    width: 4,
-                    height: 4,
+                    width: 3.5,
+                    height: 3.5,
                     margin: const EdgeInsets.symmetric(horizontal: 1),
                     decoration: BoxDecoration(
                       color: isSelected ? Colors.white : AppTheme.accentGreen,
@@ -1188,8 +1222,8 @@ class _CookingCalendarScreenState extends State<CookingCalendarScreen> with Sing
                   ),
                 if (hasReminders)
                   Container(
-                    width: 4,
-                    height: 4,
+                    width: 3.5,
+                    height: 3.5,
                     margin: const EdgeInsets.symmetric(horizontal: 1),
                     decoration: BoxDecoration(
                       color: isSelected ? Colors.white : const Color(0xFF0EA5E9),

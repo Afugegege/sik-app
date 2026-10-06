@@ -112,13 +112,13 @@ class ExploreFilters extends StatelessWidget {
 
                 return InkWell(
                   onTap: () => appState.setSortOption(opt.id),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: isSelected ? accentColor.withValues(alpha: 0.12) : appState.bgCard.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(16),
+                      color: isSelected ? accentColor.withValues(alpha: 0.12) : appState.bgCard,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? accentColor : appState.bgSubtle,
                         width: 0.8,
@@ -132,7 +132,7 @@ class ExploreFilters extends StatelessWidget {
                           size: 12.5,
                           color: isSelected ? accentColor : AppTheme.textMuted,
                         ),
-                        const SizedBox(width: 4.5),
+                        const SizedBox(width: 5),
                         Text(
                           opt.label,
                           style: GoogleFonts.plusJakartaSans(
@@ -166,7 +166,7 @@ class ExploreFilters extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               itemCount: categories.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 7),
+              separatorBuilder: (context, index) => const SizedBox(width: 6),
               itemBuilder: (context, index) {
                 final cat = categories[index];
                 final isSelected = appState.selectedFilter == cat;
@@ -174,13 +174,13 @@ class ExploreFilters extends StatelessWidget {
 
                 return InkWell(
                   onTap: () => appState.setFilter(cat),
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6.5),
                     decoration: BoxDecoration(
-                      color: isSelected ? accentColor : appState.bgCard.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(18),
+                      color: isSelected ? accentColor : appState.bgCard,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? accentColor : appState.bgSubtle,
                         width: 0.8,
@@ -194,13 +194,13 @@ class ExploreFilters extends StatelessWidget {
                           size: 13,
                           color: isSelected ? Colors.white : AppTheme.textMuted,
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 5.5),
                         Text(
                           cat,
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                            color: isSelected ? Colors.white : AppTheme.textMuted,
+                            color: isSelected ? Colors.white : AppTheme.textMain,
                           ),
                         ),
                       ],
@@ -227,13 +227,13 @@ class ExploreFilters extends StatelessWidget {
 
                 return InkWell(
                   onTap: () => appState.setCookingMethod(method),
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(12),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
                     decoration: BoxDecoration(
-                      color: isSelected ? accentColor.withValues(alpha: 0.12) : AppTheme.bgSurface,
-                      borderRadius: BorderRadius.circular(15),
+                      color: isSelected ? accentColor.withValues(alpha: 0.12) : appState.bgCard,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? accentColor : appState.bgSubtle,
                         width: 0.8,

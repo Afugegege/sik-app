@@ -112,38 +112,61 @@ class ExploreScreen extends StatelessWidget {
                                         }
                                       },
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4),
-                                        child: appState.isThinkingPantry
-                                            ? SizedBox(
-                                                width: 14,
-                                                height: 14,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                                      child: Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          color: appState.bgCard,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: appState.bgSubtle, width: 0.8),
+                                        ),
+                                        child: Center(
+                                          child: appState.isThinkingPantry
+                                              ? SizedBox(
+                                                  width: 13,
+                                                  height: 13,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 1.8,
+                                                    valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                                                  ),
+                                                )
+                                              : const Icon(
+                                                  Icons.refresh_rounded,
+                                                  size: 15,
+                                                  color: AppTheme.textMuted,
                                                 ),
-                                              )
-                                            : const Icon(
-                                                Icons.refresh_rounded,
-                                                size: 16,
-                                                color: AppTheme.textLight,
-                                              ),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(width: 6),
                                     InkWell(
                                       onTap: () => appState.toggleRandomPickerVisible(),
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4),
-                                        child: Icon(
-                                          appState.isRandomPickerVisible
-                                              ? Icons.shuffle_rounded
-                                              : Icons.shuffle_outlined,
-                                          size: 16,
+                                      child: Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
                                           color: appState.isRandomPickerVisible
-                                              ? accentColor
-                                              : AppTheme.textLight,
+                                              ? accentColor.withValues(alpha: 0.12)
+                                              : appState.bgCard,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: appState.isRandomPickerVisible
+                                                ? accentColor
+                                                : appState.bgSubtle,
+                                            width: 0.8,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            appState.isRandomPickerVisible
+                                                ? Icons.shuffle_rounded
+                                                : Icons.shuffle_outlined,
+                                            size: 15,
+                                            color: appState.isRandomPickerVisible
+                                                ? accentColor
+                                                : AppTheme.textMuted,
+                                          ),
                                         ),
                                       ),
                                     ),

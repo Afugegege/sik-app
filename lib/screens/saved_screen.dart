@@ -43,19 +43,23 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
       onTap: () {
         _tabController.animateTo(index);
       },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected ? accentColor : bgCard,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? accentColor : appState.bgSubtle,
+            width: 0.8,
+          ),
         ),
         child: Center(
           child: Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               color: isSelected ? Colors.white : AppTheme.textMuted,
             ),
@@ -78,25 +82,41 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with Calendar Action
+          // Header with Atelier Mark
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Recipe Library',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.textMain,
-                    letterSpacing: -0.5,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '식',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: appState.accentColor,
+                        letterSpacing: -0.6,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'ARCHIVE',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textMain,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 2),
                 Text(
-                  'Your personal collection & AI custom recipes',
+                  'Personal collection · Favorites · Cooked history',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: AppTheme.textMuted,
                   ),
@@ -107,17 +127,17 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
 
           // Sub-Navigation Horizontal Pill List (Clean Korean Minimalist Aesthetics)
           SizedBox(
-            height: 38,
+            height: 36,
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
                 _buildPillTab(context, 0, 'Saved Recipes'),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 _buildPillTab(context, 1, 'Favorites'),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 _buildPillTab(context, 2, 'Want to Try'),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 _buildPillTab(context, 3, 'Cooked History'),
               ],
             ),
@@ -143,6 +163,8 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
   }
 
   Widget _buildRecipeGrid(BuildContext context, List<Recipe> recipes, String emptyTitle, String emptySub) {
+    final appState = context.watch<AppState>();
+
     if (recipes.isEmpty) {
       return Center(
         child: Padding(
@@ -150,20 +172,35 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.favorite_border_rounded, size: 44, color: AppTheme.textLight),
-              const SizedBox(height: 12),
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: appState.bgCard,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: appState.bgSubtle, width: 0.8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.bookmark_border_rounded, size: 24, color: AppTheme.textLight),
+                ),
+              ),
+              const SizedBox(height: 14),
               Text(
                 emptyTitle,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: AppTheme.textMain,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 emptySub,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.5,
+                  color: AppTheme.textMuted,
+                  height: 1.4,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -171,8 +208,6 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
         ),
       );
     }
-
-    final appState = context.watch<AppState>();
 
     return Column(
       children: [

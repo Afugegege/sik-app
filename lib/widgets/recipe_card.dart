@@ -113,10 +113,10 @@ class RecipeCard extends StatelessWidget {
       const color = Color(0xFFD97706);
       final bgColor = onImage ? Colors.white.withValues(alpha: 0.94) : const Color(0xFFFFFBEB);
       final label = isGrid
-          ? '✨ Try This'
+          ? 'Try This'
           : (recipe.missingIngredientsCount > 0
-              ? '✨ Try This · ${recipe.missingIngredientsCount} to get'
-              : '✨ Try This');
+              ? 'Try This · ${recipe.missingIngredientsCount} to get'
+              : 'Try This');
 
       return Container(
         padding: EdgeInsets.symmetric(horizontal: isGrid ? 7 : 10, vertical: isGrid ? 3.5 : 4.5),

@@ -223,7 +223,7 @@ class _PostCookingInventoryCheckSheetState extends State<PostCookingInventoryChe
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Cooked & Plated! ✨',
+                        'Cooked & Plated',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,

@@ -38,13 +38,29 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     return Scaffold(
       backgroundColor: appState.bgPrimary,
       appBar: AppBar(
-        title: Text(
-          'Shopping List (Want)',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            color: AppTheme.textMain,
-          ),
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '식',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: accentColor,
+                letterSpacing: -0.6,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'MARKET LIST',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textMain,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ],
         ),
         centerTitle: false,
         backgroundColor: appState.bgPrimary,

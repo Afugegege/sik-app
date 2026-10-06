@@ -254,7 +254,7 @@ class _CookingModeScreenState extends State<CookingModeScreen>
         if (updated == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✨ Plated ${_activeRecipe!.title}! Kitchen inventory & cooking record updated.'),
+              content: Text('Plated ${_activeRecipe!.title}. Kitchen inventory & cooking record updated.'),
               behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 3),
             ),

@@ -66,19 +66,35 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Profile & Settings',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: AppTheme.textMain,
-                            letterSpacing: -0.5,
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '식',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: appState.accentColor,
+                                letterSpacing: -0.6,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'SETTINGS',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.textMain,
+                                letterSpacing: 2.0,
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 2),
                         Text(
-                          'Customize your theme color, kitchen, region & dietary preferences',
+                          'Atelier palette · Regional market · Kitchen memory',
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: AppTheme.textMuted,
                           ),
@@ -720,8 +736,8 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: appState.bgCard,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: appState.bgSubtle),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: appState.bgSubtle, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -729,16 +745,17 @@ class ProfileScreen extends StatelessWidget {
           Text(
             title,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppTheme.textMain,
+              letterSpacing: -0.2,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
+              fontSize: 11.5,
               fontWeight: FontWeight.w500,
               color: AppTheme.textMuted,
             ),

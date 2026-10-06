@@ -377,21 +377,35 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Kitchen Inventory',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: isMobile ? 18.5 : 24,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.textMain,
-                          letterSpacing: -0.5,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '식',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: isMobile ? 20 : 24,
+                              fontWeight: FontWeight.w800,
+                              color: accentColor,
+                              letterSpacing: -0.6,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'PANTRY',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: isMobile ? 12 : 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textMain,
+                              letterSpacing: 2.0,
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         '${allItems.length} total items tracked',
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: AppTheme.textMuted,
                         ),
@@ -528,15 +542,16 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
             ),
           ),
 
-          // Category TabBar: Overview | Fridge | Freezer | Pantry
+          // Category TabBar: Overview | Fridge | Freezer | Pantry | Seasoning
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
             child: Container(
-              height: 44,
-              padding: const EdgeInsets.all(4),
+              height: 42,
+              padding: const EdgeInsets.all(3.5),
               decoration: BoxDecoration(
                 color: appState.bgCard,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: appState.bgSubtle, width: 0.8),
               ),
               child: TabBar(
                 controller: _tabController,
@@ -546,19 +561,19 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                 indicatorPadding: EdgeInsets.zero,
                 indicator: BoxDecoration(
                   color: AppTheme.bgSurface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
+                      color: Color(0x0A000000),
+                      blurRadius: 4,
+                      offset: Offset(0, 1.5),
                     ),
                   ],
                 ),
                 labelColor: AppTheme.textMain,
                 unselectedLabelColor: AppTheme.textMuted,
-                labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
-                unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w500),
+                labelStyle: GoogleFonts.plusJakartaSans(fontSize: isMobile ? 11.5 : 12.5, fontWeight: FontWeight.w700),
+                unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: isMobile ? 11.5 : 12.5, fontWeight: FontWeight.w500),
                 tabs: const [
                   Tab(text: 'Overview'),
                   Tab(text: 'Fridge'),

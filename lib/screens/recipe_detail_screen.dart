@@ -1621,8 +1621,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         ),
         child: Text(
           currentRecipe.missingIngredientsCount > 0
-              ? '✨ Try This · Need ${currentRecipe.missingIngredientsCount} items'
-              : '✨ Chef\'s Inspiration',
+              ? 'Try This · Need ${currentRecipe.missingIngredientsCount} items'
+              : 'Chef\'s Inspiration',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
             fontWeight: FontWeight.w700,
