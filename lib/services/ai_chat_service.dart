@@ -491,6 +491,133 @@ class AiChatService {
       );
     }
 
+    // Silky Egg Drop Miso Garlic Noodle Pot:
+    if ((lower.contains('miso') && (lower.contains('noodle') || lower.contains('egg'))) ||
+        lower.contains('silky egg drop miso') ||
+        lower.contains('miso noodle')) {
+      return AiChatResponse(
+        text: 'Here is your recipe for soothing Egg Drop Miso Garlic Noodles from 식 studio:',
+        structuredRecipe: const AiStructuredRecipe(
+          title: 'Silky Egg Drop Miso Garlic Noodle Pot',
+          category: 'Japanese Comfort',
+          cookingTime: '12 mins',
+          difficulty: 'Easy',
+          servings: 1,
+          ingredients: [
+            '1 portion ramen or meehun noodles',
+            '1.5 tbsp white or yellow miso paste',
+            '2 large eggs (lightly beaten)',
+            '2 cloves garlic (finely minced)',
+            '450 ml dashi or chicken stock',
+            '1 tsp toasted sesame oil',
+            '1 scallion (thinly sliced)',
+            'Pinch of kosher salt & white pepper',
+          ],
+          instructions: [
+            'Sauté Garlic: Gently warm 1 tsp sesame oil in a small pot over low heat; sauté garlic for 40 seconds until fragrant.',
+            'Simmer Broth & Noodles: Pour in 450ml stock and bring to a simmer. Add noodles and cook 2–3 minutes until al dente.',
+            'Whisk Miso: Ladle 3 tbsp of hot broth into a small bowl, dissolve miso paste until smooth, and stir back into the pot.',
+            'Silky Egg Ribbon: Turn heat to low. Slowly swirl the broth with a spoon and drizzle in beaten eggs in a thin stream to create delicate, silky egg ribbons. Top with scallions.',
+          ],
+          chefNote: 'Never boil miso paste vigorously! Dissolving it at a gentle simmer preserves its delicate probiotic sweetness and aroma.',
+        ),
+        quickReplies: const [
+          'Add miso paste to shopping list',
+          'Garlic Butter Scallion Fried Rice',
+          'What can I cook with my fridge?',
+        ],
+      );
+    }
+
+    // Garlic Butter Scallion Fried Rice with Fried Egg:
+    if ((lower.contains('fried rice')) ||
+        (lower.contains('rice') && lower.contains('garlic') && lower.contains('egg')) ||
+        lower.contains('garlic butter scallion fried rice')) {
+      return AiChatResponse(
+        text: 'Here is your recipe for sizzling Garlic Butter Scallion Fried Rice from 식 studio:',
+        structuredRecipe: const AiStructuredRecipe(
+          title: 'Garlic Butter Scallion Fried Rice with Fried Egg',
+          category: 'Quick Comfort',
+          cookingTime: '10 mins',
+          difficulty: 'Easy',
+          servings: 1,
+          ingredients: [
+            '1.5 cups chilled cooked rice (day-old works best)',
+            '2 cloves garlic (thinly sliced or minced)',
+            '2 scallions (whites for sautéing, greens for garnish)',
+            '1.5 tbsp unsalted butter',
+            '1 tbsp light soy sauce',
+            '1 large egg',
+            '1 tsp toasted sesame oil & pinch of black pepper',
+          ],
+          instructions: [
+            'Sizzle Aromatics: Melt 1 tbsp butter in a hot skillet. Sauté garlic and scallion whites on medium heat until golden and sweet.',
+            'Toss Fluffy Rice: Turn heat to high. Add chilled rice, breaking up clumps with a wooden spatula. Toss vigorously for 3 minutes.',
+            'Caramelize Soy Sauce: Swirl soy sauce around the searing hot rim of the pan so it sizzles into smoky aromatics before tossing through the rice.',
+            'Fry Runny Egg: Plate rice. In the same skillet, melt remaining butter and fry an egg sunny-side-up with crispy edges. Place atop rice, crack pepper, and drizzle sesame oil.',
+          ],
+          chefNote: 'Searing the soy sauce against the hot metal pan edge creates instant "wok hei" smoky caramelization.',
+        ),
+        quickReplies: const [
+          'Add eggs to shopping list',
+          'Savory Umami Garlic Broth Meehun Soup',
+          'What can I cook with my fridge?',
+        ],
+      );
+    }
+
+    // Kimchi Jjigae with Tofu & Pork:
+    if ((lower.contains('kimchi') && (lower.contains('stew') || lower.contains('jjigae') || lower.contains('soup'))) ||
+        lower.contains('kimchi stew') ||
+        lower.contains('kimchi jjigae')) {
+      return AiChatResponse(
+        text: 'Here is your recipe for rich, bubbly Aged Kimchi & Tofu Stew (김치찌개):',
+        structuredRecipe: const AiStructuredRecipe(
+          title: 'Aged Kimchi & Soft Tofu Stew (김치찌개)',
+          koreanTitle: '김치찌개',
+          category: 'Korean Classic',
+          cookingTime: '20 mins',
+          difficulty: 'Easy',
+          servings: 2,
+          ingredients: [
+            '1.5 cups well-aged sour kimchi (chopped)',
+            '100 g pork belly or spam (sliced)',
+            '½ block firm or soft tofu (sliced into slabs)',
+            '2 cloves garlic (minced)',
+            '1 scallion (chopped)',
+            '1 tbsp Gochugaru (Korean red pepper flakes)',
+            '1 tsp sesame oil & 1 tsp soy sauce',
+            '450 ml water, dashi, or anchovy broth',
+          ],
+          instructions: [
+            'Stir-Fry Kimchi & Meat: In a small pot, warm sesame oil over medium heat. Sauté pork and aged kimchi for 4–5 minutes until kimchi turns translucent and pork browns.',
+            'Simmer Broth: Pour in 450ml broth and add minced garlic and Gochugaru. Bring to a rolling boil, then lower heat to medium-low and simmer for 10 minutes to deepen flavor.',
+            'Add Tofu & Finish: Lay tofu slices on top, season with soy sauce, and simmer 3 more minutes. Scatter fresh scallions and serve piping hot with rice.',
+          ],
+          chefNote: 'Using well-fermented, sour aged kimchi is the secret! Sautéing it in sesame oil first caramelizes the lactic acid into deep savory sweetness.',
+        ),
+        quickReplies: const [
+          'Add tofu to shopping list',
+          'Garlic Butter Scallion Fried Rice',
+          'What can I cook with my fridge?',
+        ],
+      );
+    }
+
+    // Dynamic User Pantry / "I have X, what can I make" Synthesizer:
+    final synthesizedCustom = _trySynthesizeFromUserPantry(prompt, lower, fridgeItems);
+    if (synthesizedCustom != null) {
+      return AiChatResponse(
+        text: 'Based on what you have, here is a custom, chef-seasoned recipe created just for your kitchen by 식 studio:',
+        structuredRecipe: synthesizedCustom,
+        quickReplies: const [
+          'Add missing ingredients to shopping list',
+          'Show alternative recipe ideas',
+          'What can I cook with my fridge?',
+        ],
+      );
+    }
+
     // 2. "I WANNA COOK" / MEAL & RECIPE INTENT (GENERATE NEW NON-DASHBOARD CHOICES)
     if (lower.contains('wanna cook') ||
         lower.contains('want to cook') ||
@@ -1020,5 +1147,163 @@ SUGGESTIONS: suggestion 1 | suggestion 2 | suggestion 3'''
     }
 
     return items;
+  }
+
+  /// Synthesizes a bespoke chef recipe whenever the user states what they have and want to make.
+  static AiStructuredRecipe? _trySynthesizeFromUserPantry(
+    String prompt,
+    String lower,
+    List<FridgeItem> fridgeItems,
+  ) {
+    final isExplicitPantry = lower.contains('i have') ||
+        lower.contains('i got') ||
+        lower.contains('what can i make with') ||
+        lower.contains('what can i cook with') ||
+        lower.contains('make with') ||
+        lower.contains('cook with') ||
+        lower.contains('wanna make') ||
+        lower.contains('want to make');
+
+    if (!isExplicitPantry) {
+      return null;
+    }
+
+    // Extract ingredients from prompt or from current fridge items
+    final extractedIngredients = <String>[];
+    for (final item in fridgeItems) {
+      if (lower.contains(item.name.toLowerCase())) {
+        extractedIngredients.add(item.name);
+      }
+    }
+
+    if (lower.contains('i have') || lower.contains('i got')) {
+      final parts = lower.split(RegExp(r'\b(i have|i got)\b'));
+      if (parts.length > 1) {
+        final afterHave = parts[1].split(RegExp(r'\b(and i wanna|and i want|and want|wanna make|want to make|\?|\.)\b'))[0];
+        final rawTokens = afterHave
+            .split(RegExp(r'[,&]|\band\b'))
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty);
+        for (final tok in rawTokens) {
+          final clean = tok.replaceAll(RegExp(r'^(some|a|an|few|my|1|2|3|4|5)\s+'), '').trim();
+          if (clean.length > 2 && !extractedIngredients.any((e) => e.toLowerCase() == clean.toLowerCase())) {
+            extractedIngredients.add(clean[0].toUpperCase() + clean.substring(1));
+          }
+        }
+      }
+    }
+
+    if (extractedIngredients.isEmpty && fridgeItems.isNotEmpty) {
+      extractedIngredients.addAll(fridgeItems.take(4).map((e) => e.name));
+    }
+
+    if (extractedIngredients.isEmpty) {
+      return null;
+    }
+
+    final hasNoodle = lower.contains('noodle') || lower.contains('meehun') || lower.contains('ramen');
+    final hasRice = lower.contains('rice') || lower.contains('bowl') || lower.contains('fried rice');
+    final hasSoup = lower.contains('soup') || lower.contains('broth') || lower.contains('stew');
+    final hasPasta = lower.contains('pasta') || lower.contains('spaghetti');
+
+    final primary = extractedIngredients.first;
+    final secondary = extractedIngredients.length > 1 ? extractedIngredients[1] : 'Garlic';
+
+    String title;
+    String category;
+    String cookingTime;
+    String difficulty = 'Easy';
+    List<String> ingredients = [];
+    List<String> instructions = [];
+    String chefNote;
+
+    if (hasSoup || hasNoodle) {
+      title = 'Aromatic Garlic & $secondary ${hasNoodle ? 'Noodle Pot' : 'Simmered Broth'}';
+      category = 'Comfort Broth';
+      cookingTime = '12 mins';
+      ingredients = [
+        ...extractedIngredients.map((e) => '1 portion $e'),
+        '2 cloves garlic (finely minced)',
+        '450 ml seasoned chicken broth or dashi',
+        '1 tbsp light soy sauce',
+        '1 tsp toasted sesame oil',
+        'Pinch of kosher salt & white pepper',
+      ];
+      instructions = [
+        'Sizzle Aromatics: In a saucepan over medium heat, warm 1 tsp oil and sauté minced garlic for 45 seconds until fragrant.',
+        'Infuse Broth: Pour in 450ml broth, add soy sauce, salt, and white pepper. Bring to a vigorous rolling simmer.',
+        'Simmer Ingredients: Add ${extractedIngredients.join(' and ')} directly into the simmering broth. Cook 3–5 minutes until tender.',
+        'Finish & Emulsify: Turn off heat, drizzle toasted sesame oil, and ladle hot into a deep bowl.',
+      ];
+      chefNote = 'Blooming garlic in warm oil before pouring in liquid builds an instant, savory restaurant broth depth.';
+    } else if (hasRice) {
+      title = 'Sizzling Garlic Soy $primary & $secondary Rice Bowl';
+      category = 'Quick Comfort';
+      cookingTime = '12 mins';
+      ingredients = [
+        ...extractedIngredients.map((e) => '1 cup $e'),
+        '2 cloves garlic (minced)',
+        '1.5 tbsp light soy sauce',
+        '1 tbsp butter or sesame oil',
+        '½ tsp kosher salt & cracked black pepper',
+      ];
+      instructions = [
+        'Sear Ingredients: Heat oil in a heavy skillet over high heat. Add ${extractedIngredients.take(2).join(' and ')} and sear for 3–4 minutes until golden.',
+        'Aromatic Butter Glaze: Push ingredients to pan edge; melt butter with minced garlic and soy sauce in center until bubbling.',
+        'Toss & Caramelize: Toss rice and all ingredients vigorously in the sizzling butter glaze for 2 minutes to create a crispy crust.',
+        'Plate: Spoon into a warm bowl and finish with freshly cracked black pepper.',
+      ];
+      chefNote = 'Keep skillet on high heat and press down lightly with spatula to develop delicious crispy bits.';
+    } else if (hasPasta) {
+      title = 'Silky Garlic Butter $primary & $secondary Pasta';
+      category = 'Bistro Pasta';
+      cookingTime = '15 mins';
+      ingredients = [
+        '200 g pasta of your choice',
+        ...extractedIngredients.map((e) => '1 portion $e'),
+        '3 cloves garlic (thinly sliced)',
+        '2 tbsp butter or extra virgin olive oil',
+        '½ cup pasta cooking water',
+        '½ tsp kosher salt & cracked black pepper',
+      ];
+      instructions = [
+        'Boil Pasta: Cook pasta in heavily salted boiling water until 1 minute shy of al dente. Reserve ½ cup starchy pasta water.',
+        'Sauté Aromatics: In a wide pan, gently sizzle sliced garlic in oil over low heat until golden and sweet.',
+        'Sear Ingredients: Add ${extractedIngredients.join(' and ')} to the pan and toss until hot and seasoned.',
+        'Emulsify Sauce: Add drained pasta and splash of pasta water. Swirl vigorously with cold butter to create a glossy emulsion coating every strand.',
+      ];
+      chefNote = 'Starchy pasta water emulsified with butter creates an authentic glossy sauce without needing heavy cream.';
+    } else {
+      title = 'Golden Pan-Seared $primary with $secondary Glaze';
+      category = 'Bistro Main';
+      cookingTime = '15 mins';
+      difficulty = 'Medium';
+      ingredients = [
+        ...extractedIngredients.map((e) => '1 serving $e'),
+        '2 cloves garlic (crushed)',
+        '1 tbsp unsalted butter',
+        '1 tbsp soy sauce or fresh lemon juice',
+        '½ tsp kosher salt & cracked black pepper',
+        '1 tbsp cooking oil',
+      ];
+      instructions = [
+        'Season & Sear: Pat ingredients dry; season thoroughly with salt and pepper. Sear in smoking hot oil for 4–5 minutes until deeply browned.',
+        'Butter Baste: Reduce heat to medium. Add butter, crushed garlic, and pan sauce (soy sauce or lemon).',
+        'Emulsify & Glaze: Tilt pan and spoon the foaming garlic butter repeatedly over the ingredients for 2 minutes.',
+        'Rest & Serve: Rest on a warm board for 2 minutes before plating with pan juices.',
+      ];
+      chefNote = 'Continuous butter basting keeps proteins succulent while developing a savory caramelized crust.';
+    }
+
+    return AiStructuredRecipe(
+      title: title,
+      category: category,
+      cookingTime: cookingTime,
+      difficulty: difficulty,
+      servings: 2,
+      ingredients: ingredients,
+      instructions: instructions,
+      chefNote: chefNote,
+    );
   }
 }

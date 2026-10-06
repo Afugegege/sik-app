@@ -11,10 +11,12 @@ import '../models/cooking_record.dart';
 import '../models/cooking_reminder.dart';
 import '../services/storage_service.dart';
 import '../services/pantry_recipe_synthesizer.dart';
+import '../services/ai_chat_service.dart';
 import '../theme/app_theme.dart';
 
 class AppState extends ChangeNotifier {
-  static const int tabDishes = 0;
+  static const int tabAi = 0;
+  static const int tabDishes = 1;
   static const int tabExplore = 1;
   static const int tabFridge = 2;
   static const int tabJournal = 3;
@@ -374,6 +376,82 @@ class AppState extends ChangeNotifier {
       ),
     );
     notifyListeners();
+  }
+
+  bool _isGeneratingChatResponse = false;
+  bool get isGeneratingChatResponse => _isGeneratingChatResponse;
+
+  /// Sends a user message to the AI culinary companion, generates a rich response,
+  /// and updates chat history across the entire app.
+  Future<void> sendUserChatMessage(
+    String text, {
+    bool isVoice = false,
+    int? voiceDuration,
+  }) async {
+    final query = text.trim();
+    if (query.isEmpty || _isGeneratingChatResponse) return;
+
+    // 1. Add user message
+    final userMsg = AiChatMessage(
+      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      text: query,
+      isUser: true,
+      timestamp: DateTime.now(),
+      isVoiceMessage: isVoice,
+      voiceDurationSeconds: voiceDuration,
+    );
+    addChatMessage(userMsg);
+
+    _isGeneratingChatResponse = true;
+    notifyListeners();
+
+    try {
+      final response = await AiChatService.generateResponse(
+        prompt: query,
+        fridgeItems: _fridgeItems,
+        availableRecipes: recipes,
+        apiKey: _apiKey,
+        preferredCuisines: _preferredCuisines,
+        conversationHistory: _chatMessages,
+      );
+
+      final aiMsg = AiChatMessage(
+        id: 'ai_${DateTime.now().millisecondsSinceEpoch}',
+        text: response.text,
+        isUser: false,
+        timestamp: DateTime.now(),
+        quickReplies: response.quickReplies,
+        suggestedIngredients: response.suggestedIngredients,
+        recommendedRecipes: response.recommendedRecipes,
+        actions: response.actions,
+        batchInventoryActions: response.batchInventoryActions,
+        recipeOptions: response.recipeOptions,
+        structuredRecipe: response.structuredRecipe,
+      );
+      addChatMessage(aiMsg);
+    } catch (_) {
+      addChatMessage(
+        AiChatMessage(
+          id: 'ai_err_${DateTime.now().millisecondsSinceEpoch}',
+          text: 'I ran into a temporary issue, but you can ask about recipe ideas or ingredients anytime!',
+          isUser: false,
+          timestamp: DateTime.now(),
+          quickReplies: const [
+            'What can I cook with my fridge?',
+            'Cookie & baking guide',
+          ],
+        ),
+      );
+    } finally {
+      _isGeneratingChatResponse = false;
+      notifyListeners();
+    }
+  }
+
+  /// Switches to Tab 0 (식 AI Chat Screen) and dispatches the query to the AI.
+  void openAiChatWithQuery(String query) {
+    setActiveTab(tabAi);
+    sendUserChatMessage(query);
   }
 
   int _composeDiverseFeed() {

@@ -6,12 +6,12 @@ import '../theme/app_theme.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/floating_ai_bar.dart';
 import 'explore_screen.dart';
-import 'minimalist_discovery_flow_screen.dart';
 import 'fridge_screen.dart';
 import 'cooking_calendar_screen.dart';
 import 'saved_screen.dart';
 import 'profile_screen.dart';
 import 'cooking_mode_screen.dart';
+import 'ai_chat_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -51,12 +51,12 @@ class _MainShellState extends State<MainShell> {
       backgroundColor: appState.bgPrimary,
       body: Stack(
         children: [
-          // Tab Views IndexedStack
+          // Tab Views IndexedStack with 식 AI as the Hero Main Screen (Tab 0)
           IndexedStack(
             index: appState.activeTabIndex,
             children: const [
+              AiChatScreen(isMainTab: true),
               ExploreScreen(),
-              MinimalistDiscoveryFlowScreen(),
               FridgeScreen(),
               CookingCalendarScreen(),
               SavedScreen(),
@@ -64,36 +64,37 @@ class _MainShellState extends State<MainShell> {
             ],
           ),
 
-          // Gradient fade effect behind the AI chat bar
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 64,
-            height: 110,
-            child: IgnorePointer(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      appState.bgPrimary.withValues(alpha: 0.0),
-                      appState.bgPrimary.withValues(alpha: 0.85),
-                      appState.bgPrimary,
-                    ],
+          // Gradient fade and Floating AI Prompt Bar (shown only when NOT on Tab 0, since Tab 0 has its own dedicated composer)
+          if (appState.activeTabIndex != AppState.tabAi) ...[
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 64,
+              height: 110,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        appState.bgPrimary.withValues(alpha: 0.0),
+                        appState.bgPrimary.withValues(alpha: 0.85),
+                        appState.bgPrimary,
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          // Floating AI Prompt Bar floating distinctly above Bottom Navigation
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 72,
-            child: FloatingAiBar(),
-          ),
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 72,
+              child: FloatingAiBar(),
+            ),
+          ],
 
           // Sticky Bottom Navigation Bar (borderless, seamless)
           Positioned(
@@ -117,14 +118,14 @@ class _MainShellState extends State<MainShell> {
                 elevation: 0,
                 items: const [
                   BottomNavigationBarItem(
+                    icon: Icon(Icons.auto_awesome_outlined, size: 21),
+                    activeIcon: Icon(Icons.auto_awesome_rounded, size: 21),
+                    label: '식 AI',
+                  ),
+                  BottomNavigationBarItem(
                     icon: Icon(Icons.restaurant_menu_outlined, size: 21),
                     activeIcon: Icon(Icons.restaurant_menu, size: 21),
                     label: 'Dishes',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.explore_outlined, size: 21),
-                    activeIcon: Icon(Icons.explore, size: 21),
-                    label: 'Explore',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.kitchen_outlined, size: 21),
@@ -179,8 +180,8 @@ class _MainShellState extends State<MainShell> {
                 IndexedStack(
                   index: appState.activeTabIndex,
                   children: const [
+                    AiChatScreen(isMainTab: true),
                     ExploreScreen(),
-                    MinimalistDiscoveryFlowScreen(),
                     FridgeScreen(),
                     CookingCalendarScreen(),
                     SavedScreen(),
@@ -188,41 +189,42 @@ class _MainShellState extends State<MainShell> {
                   ],
                 ),
 
-                // Gradient fade effect behind AI Chat bar on tablet
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 120,
-                  child: IgnorePointer(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            appState.bgPrimary.withValues(alpha: 0.0),
-                            appState.bgPrimary.withValues(alpha: 0.85),
-                            appState.bgPrimary,
-                          ],
+                // Gradient fade & Floating AI Bar on tablet (shown only on tabs 1..5)
+                if (appState.activeTabIndex != AppState.tabAi) ...[
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 120,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              appState.bgPrimary.withValues(alpha: 0.0),
+                              appState.bgPrimary.withValues(alpha: 0.85),
+                              appState.bgPrimary,
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                // Tablet-optimized Centered Floating AI Bar
-                Positioned(
-                  left: 20,
-                  right: 20,
-                  bottom: 24,
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 560),
-                      child: const FloatingAiBar(),
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 24,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 560),
+                        child: const FloatingAiBar(),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -291,9 +293,9 @@ class _MainShellState extends State<MainShell> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  _railNavItem(0, Icons.restaurant_menu_outlined, Icons.restaurant_menu, 'Dishes', appState, accentColor),
+                  _railNavItem(0, Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, '식 AI', appState, accentColor),
                   const SizedBox(height: 10),
-                  _railNavItem(1, Icons.explore_outlined, Icons.explore, 'Explore', appState, accentColor),
+                  _railNavItem(1, Icons.restaurant_menu_outlined, Icons.restaurant_menu, 'Dishes', appState, accentColor),
                   const SizedBox(height: 10),
                   _railNavItem(2, Icons.kitchen_outlined, Icons.kitchen, 'Fridge', appState, accentColor),
                   const SizedBox(height: 10),

@@ -156,6 +156,40 @@ class PantryRecipeSynthesizer {
     return false;
   }
 
+  /// Retrieves the matched FridgeItem if inventory satisfies the recipe requirement.
+  static FridgeItem? getMatchedFridgeItem(String recipeIngredientName, List<FridgeItem> inventory) {
+    if (inventory.isEmpty) return null;
+
+    final rClean = recipeIngredientName.toLowerCase().trim();
+    final rTokens = extractCoreTokens(recipeIngredientName);
+    if (rTokens.isEmpty) return null;
+
+    for (final item in inventory) {
+      final fClean = item.name.toLowerCase().trim();
+      if (fClean.isEmpty) continue;
+
+      if (rClean == fClean) return item;
+
+      if ((rClean.contains('lao gan ma') || rClean.contains('老干妈')) &&
+          (fClean.contains('lao gan ma') || fClean.contains('老干妈'))) {
+        return item;
+      }
+
+      final fTokens = extractCoreTokens(item.name);
+      if (fTokens.isEmpty) continue;
+
+      for (final rt in rTokens) {
+        for (final ft in fTokens) {
+          if (rt == ft || areSynonymsOrStems(rt, ft) ||
+              (rt.length >= 5 && ft.length >= 5 && (rt.startsWith(ft) || ft.startsWith(rt)))) {
+            return item;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   /// Evaluates culinary equivalencies and stems.
   static bool areSynonymsOrStems(String a, String b) {
     if (a == b) return true;

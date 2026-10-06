@@ -391,7 +391,7 @@ class AiCommandProcessor {
 
     if (isShortSearch) {
       appState.setAiQuery(prompt);
-      appState.setActiveTab(AppState.tabDishes);
+      appState.setActiveTab(AppState.tabAi);
       return AiCommandResult(
         executedAction: true,
         feedbackMessage: 'Filtered recipes matching "$prompt"',
