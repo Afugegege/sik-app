@@ -401,138 +401,97 @@ class _IngredientTileState extends State<IngredientTile> {
     return Opacity(
       opacity: _isDragging ? 0.3 : 1.0,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 6),
         decoration: BoxDecoration(
-          color: AppTheme.bgSurface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: appState.bgSubtle, width: 1),
+          color: appState.bgCard,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: appState.bgSubtle.withValues(alpha: 0.5), width: 0.8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // 1. Dedicated Drag Handle (Immediate drag to move between fridge zones)
-                Draggable<FridgeItem>(
-                  data: item,
-                  onDragStarted: () => setState(() => _isDragging = true),
-                  onDragEnd: (_) => setState(() => _isDragging = false),
-                  onDraggableCanceled: (velocity, offset) => setState(() => _isDragging = false),
-                  feedback: _buildDragFeedback(context, appState),
-                  childWhenDragging: const SizedBox.shrink(),
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.grab,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(8, 10, 2, 10),
-                      child: Icon(
-                        Icons.drag_indicator_rounded,
-                        size: 18,
-                        color: AppTheme.textLight.withValues(alpha: 0.55),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // 2. Main Card Body (Tappable for Edit Modal, Long-pressable for Moving)
-                Expanded(
-                  child: LongPressDraggable<FridgeItem>(
-                    data: item,
-                    delay: const Duration(milliseconds: 350),
-                    onDragStarted: () => setState(() => _isDragging = true),
-                    onDragEnd: (_) => setState(() => _isDragging = false),
-                    onDraggableCanceled: (velocity, offset) => setState(() => _isDragging = false),
-                    feedback: _buildDragFeedback(context, appState),
-                    childWhenDragging: const SizedBox.shrink(),
-                    child: InkWell(
-                      onTap: () => _showEditItemModal(context, item),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                        child: Row(
+            LongPressDraggable<FridgeItem>(
+              data: item,
+              delay: const Duration(milliseconds: 350),
+              onDragStarted: () => setState(() => _isDragging = true),
+              onDragEnd: (_) => setState(() => _isDragging = false),
+              onDraggableCanceled: (velocity, offset) => setState(() => _isDragging = false),
+              feedback: _buildDragFeedback(context, appState),
+              childWhenDragging: const SizedBox.shrink(),
+              child: InkWell(
+                onTap: () => _showEditItemModal(context, item),
+                borderRadius: BorderRadius.circular(14),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  child: Row(
+                    children: [
+                      // Status Dot if Running Low or Missing
+                      if (item.status.toLowerCase() != 'have') ...[
+                        Container(
+                          width: 7,
+                          height: 7,
+                          margin: const EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                      // Ingredient Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: statusBgColor,
-                                borderRadius: BorderRadius.circular(10),
+                            Text(
+                              item.name,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.textMain,
                               ),
-                              child: Center(
-                                child: Icon(
-                                  item.status == 'Have'
-                                      ? Icons.check_circle_outline_rounded
-                                      : item.status == 'Running low'
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.shopping_bag_outlined,
-                                  color: statusColor,
-                                  size: 17,
-                                ),
-                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.name,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppTheme.textMain,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 1),
-                                  Text(
-                                    appState.trackQuantities
-                                        ? fuzzyNote
-                                        : '${item.location.name.toUpperCase()} · ${item.status}',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppTheme.textMuted,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                            const SizedBox(height: 2),
+                            Text(
+                              appState.trackQuantities
+                                  ? fuzzyNote
+                                  : '${item.location.name.toUpperCase()} · ${item.status}',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: AppTheme.textMuted,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      // Quantity Scrubber Badge or Checklist Status Pill
+                      if (appState.trackQuantities)
+                        QuantityScrubberBadge(item: item)
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusBgColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            item.status,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: statusColor,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-
-                // 3. Quantity Scrubber Badge or Checklist Status Pill
-                if (appState.trackQuantities)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(2, 8, 10, 8),
-                    child: QuantityScrubberBadge(item: item),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(2, 8, 12, 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: statusBgColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        item.status,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w700,
-                          color: statusColor,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             ),
 
             // Regional Substitution Intelligence Callout

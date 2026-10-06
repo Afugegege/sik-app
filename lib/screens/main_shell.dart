@@ -64,8 +64,8 @@ class _MainShellState extends State<MainShell> {
             ],
           ),
 
-          // Gradient fade and Floating AI Prompt Bar (shown only when NOT on Tab 0, since Tab 0 has its own dedicated composer)
-          if (appState.activeTabIndex != AppState.tabAi) ...[
+          // Gradient fade and Floating AI Prompt Bar (shown only when on Explore/Dishes tab)
+          if (appState.activeTabIndex == AppState.tabExplore) ...[
             Positioned(
               left: 0,
               right: 0,
@@ -163,8 +163,8 @@ class _MainShellState extends State<MainShell> {
                   ],
                 ),
 
-                // Gradient fade & Floating AI Bar on tablet (shown only on tabs 1..5)
-                if (appState.activeTabIndex != AppState.tabAi) ...[
+                // Gradient fade & Floating AI Bar on tablet (shown only on Explore tab)
+                if (appState.activeTabIndex == AppState.tabExplore) ...[
                   Positioned(
                     left: 0,
                     right: 0,

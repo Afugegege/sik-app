@@ -524,13 +524,8 @@ class _QuantityScrubberBadgeState extends State<QuantityScrubberBadge> with Sing
                   ),
                 ),
                 const SizedBox(width: 3),
-              ] else if (hasDisplay) ...[
-                const Icon(
-                  Icons.tune_rounded,
-                  size: 11,
-                  color: AppTheme.textLight,
-                ),
-                const SizedBox(width: 3),
+              ] else ...[
+                // Clean typography without redundant slider icon
               ],
 
               Text(

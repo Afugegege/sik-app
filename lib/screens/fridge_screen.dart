@@ -6,8 +6,6 @@ import '../providers/app_state.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ingredient_tile.dart';
 import 'shopping_screen.dart';
-import 'ai_chat_screen.dart';
-
 class FridgeScreen extends StatefulWidget {
   const FridgeScreen({super.key});
 
@@ -417,35 +415,10 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(width: 8),
 
-                // Header Actions: AI Chat, Shopping List & Add Item
+                // Header Actions: Shopping List, Add Item & Quiet Options
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      tooltip: '식 AI Chat',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AiChatScreen()),
-                        );
-                      },
-                      icon: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.auto_awesome,
-                          size: 16,
-                          color: accentColor,
-                        ),
-                      ),
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                    ),
-                    const SizedBox(width: 4),
                     IconButton(
                       tooltip: 'Shopping List',
                       visualDensity: VisualDensity.compact,
@@ -461,78 +434,34 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
                         isLabelVisible: appState.wantList.isNotEmpty,
                         label: Text('${appState.wantList.length}'),
                         backgroundColor: accentColor,
-                        child: const Icon(Icons.shopping_cart_outlined, color: AppTheme.textMain, size: 21),
+                        child: const Icon(Icons.shopping_bag_outlined, color: AppTheme.textMain, size: 21),
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    // Quantity Tracking Toggle Button
-                    IconButton(
-                      tooltip: appState.trackQuantities
-                          ? 'Quantities ON (Tap to switch to simple checklist)'
-                          : 'Checklist Mode (Tap to track quantities)',
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
-                      onPressed: () {
-                        appState.toggleTrackQuantities();
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              appState.trackQuantities
-                                  ? 'Quantity tracking active. Exact & approximate amounts shown.'
-                                  : 'Checklist mode active. Quantities hidden but safely preserved.',
-                            ),
-                            duration: const Duration(seconds: 2),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                      icon: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: appState.trackQuantities ? accentColor.withValues(alpha: 0.12) : appState.bgSubtle,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          appState.trackQuantities ? Icons.scale_rounded : Icons.checklist_rounded,
-                          size: 16,
-                          color: appState.trackQuantities ? accentColor : AppTheme.textMuted,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed: () => _showAddItemDialog(context),
                       icon: const Icon(Icons.add_rounded, size: 17),
                       label: Text(isMobile ? 'Add' : 'Add Item'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
+                        backgroundColor: AppTheme.textMain,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 12, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 14, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
                       ),
                     ),
                     if (allItems.isNotEmpty) ...[
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       IconButton(
                         tooltip: 'Delete Everything',
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.all(4),
                         constraints: const BoxConstraints(),
                         onPressed: () => _showClearAllDialog(context, appState),
-                        icon: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppTheme.accentOrange.withValues(alpha: 0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.delete_sweep_outlined,
-                            size: 16,
-                            color: AppTheme.accentOrange,
-                          ),
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 19,
+                          color: AppTheme.textLight,
                         ),
                       ),
                     ],
@@ -618,59 +547,12 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 150),
       children: [
-        // Summary Stats Row with Drag & Drop Targets
-        Row(
-          children: [
-            Expanded(child: _buildZoneCard(
-              context,
-              icon: Icons.kitchen_rounded,
-              label: 'Fridge',
-              count: fridgeItems.length,
-              color: AppTheme.textMain,
-              tabIndex: 1,
-              location: StorageLocation.fridge,
-            )),
-            const SizedBox(width: 8),
-            Expanded(child: _buildZoneCard(
-              context,
-              icon: Icons.ac_unit_rounded,
-              label: 'Freezer',
-              count: freezerItems.length,
-              color: AppTheme.textMain,
-              tabIndex: 2,
-              location: StorageLocation.freezer,
-            )),
-            const SizedBox(width: 8),
-            Expanded(child: _buildZoneCard(
-              context,
-              icon: Icons.inventory_2_outlined,
-              label: 'Pantry',
-              count: pantryItems.length,
-              color: AppTheme.textMain,
-              tabIndex: 3,
-              location: StorageLocation.pantry,
-            )),
-            const SizedBox(width: 8),
-            Expanded(child: _buildZoneCard(
-              context,
-              icon: Icons.soup_kitchen_outlined,
-              label: 'Seasoning',
-              count: seasoningItems.length,
-              color: AppTheme.textMain,
-              tabIndex: 4,
-              location: StorageLocation.seasoning,
-            )),
-          ],
-        ),
-
-        const SizedBox(height: 16),
-
-        // Alert banner for low / missing items
-        if (lowItems.isNotEmpty || missingItems.isNotEmpty)
+        // Alert banner for low / missing items (if any)
+        if (lowItems.isNotEmpty || missingItems.isNotEmpty) ...[
           _buildAlertBanner(lowItems, missingItems, appState),
+          const SizedBox(height: 14),
+        ],
 
-        if (lowItems.isNotEmpty || missingItems.isNotEmpty)
-          const SizedBox(height: 16),
 
         // Grouped sections with Drop Target support
         if (fridgeItems.isNotEmpty) ...[
@@ -707,110 +589,6 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildZoneCard(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required int count,
-    required Color color,
-    required int tabIndex,
-    required StorageLocation location,
-  }) {
-    final appState = context.read<AppState>();
-    final isTablet = MediaQuery.sizeOf(context).width >= 768;
-
-    return DragTarget<FridgeItem>(
-      onWillAcceptWithDetails: (details) => details.data.location != location,
-      onAcceptWithDetails: (details) {
-        final item = details.data;
-        appState.updateFridgeItem(item.copyWith(location: location));
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(icon, color: Colors.white, size: 16),
-                const SizedBox(width: 8),
-                Text('Moved "${item.name}" to $label'),
-              ],
-            ),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            duration: const Duration(milliseconds: 1800),
-          ),
-        );
-      },
-      builder: (context, candidateData, rejectedData) {
-        final isHovered = candidateData.isNotEmpty;
-
-        return GestureDetector(
-          onTap: () {
-            _tabController.animateTo(tabIndex);
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            padding: EdgeInsets.symmetric(
-              vertical: isTablet ? 10 : 11,
-              horizontal: isTablet ? 12 : 6,
-            ),
-            decoration: BoxDecoration(
-              color: isHovered ? color.withValues(alpha: 0.12) : AppTheme.bgSurface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isHovered ? color : appState.bgSubtle,
-                width: isHovered ? 2 : 1,
-              ),
-              boxShadow: isHovered
-                  ? [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.25),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(icon, size: 14, color: color),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '$count',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.textMain,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    isHovered ? 'Drop' : label,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: isHovered ? FontWeight.w700 : FontWeight.w600,
-                      color: isHovered ? color : AppTheme.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildAlertBanner(List<FridgeItem> lowItems, List<FridgeItem> missingItems, AppState appState) {
     final parts = <String>[];
@@ -913,30 +691,22 @@ class _FridgeScreenState extends State<FridgeScreen> with SingleTickerProviderSt
               : null,
           child: Row(
             children: [
-              Icon(icon, size: 16, color: color),
-              const SizedBox(width: 8),
               Text(
                 title,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: isHovered ? color : AppTheme.textMain,
+                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  isHovered ? 'Drop' : '$count',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: color,
-                  ),
+              Text(
+                isHovered ? '· Drop here' : '· $count',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: isHovered ? color : AppTheme.textLight,
                 ),
               ),
             ],

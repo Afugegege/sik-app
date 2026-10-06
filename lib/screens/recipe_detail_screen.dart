@@ -850,16 +850,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
                           const SizedBox(height: 14),
 
-                          // Meta Chips Row
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _detailMetaChip(context, Icons.timer_outlined, '${currentRecipe.cookingTimeMinutes} mins'),
-                              _detailMetaChip(context, Icons.soup_kitchen_outlined, currentRecipe.cookingMethod),
-                              _detailMetaChip(context, Icons.bar_chart_rounded, currentRecipe.difficulty),
-                              _detailMetaChip(context, Icons.people_outline_rounded, '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}'),
-                            ],
+                          // Editorial Recipe Specs
+                          Text(
+                            '${currentRecipe.cookingTimeMinutes} mins   ·   ${currentRecipe.cookingMethod}   ·   ${currentRecipe.difficulty}   ·   $_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.textMuted,
+                              letterSpacing: 0.2,
+                            ),
                           ),
 
                           const SizedBox(height: 18),
@@ -1189,16 +1188,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
                                   const SizedBox(height: 12),
 
-                                  // Meta Chips (Time, Method, Difficulty)
-                                  Wrap(
-                                    spacing: 6,
-                                    runSpacing: 6,
-                                    children: [
-                                      _detailMetaChip(context, Icons.timer_outlined, '${currentRecipe.cookingTimeMinutes} mins'),
-                                      _detailMetaChip(context, Icons.soup_kitchen_outlined, currentRecipe.cookingMethod),
-                                      _detailMetaChip(context, Icons.bar_chart_rounded, currentRecipe.difficulty),
-                                      _detailMetaChip(context, Icons.people_outline_rounded, '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}'),
-                                    ],
+                                  // Editorial Recipe Specs
+                                  Text(
+                                    '${currentRecipe.cookingTimeMinutes} mins   ·   ${currentRecipe.cookingMethod}   ·   ${currentRecipe.difficulty}   ·   $_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppTheme.textMuted,
+                                      letterSpacing: 0.2,
+                                    ),
                                   ),
                                   const SizedBox(height: 16),
 
@@ -1660,48 +1658,47 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     final hasSub = _substitutions.containsKey(ingName);
     final sub = _substitutions[ingName];
 
-    final isHave = ing.status == 'have';
     final isLow = ing.status == 'low';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
       decoration: BoxDecoration(
         color: isRemoved
             ? (hasSub
-                ? accentColor.withValues(alpha: 0.07)
-                : appState.bgCard.withValues(alpha: 0.5))
+                ? accentColor.withValues(alpha: 0.05)
+                : appState.bgSubtle.withValues(alpha: 0.25))
             : appState.bgCard,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isRemoved
               ? (hasSub
-                  ? accentColor.withValues(alpha: 0.35)
-                  : Colors.redAccent.withValues(alpha: 0.25))
-              : appState.bgSubtle,
-          width: isRemoved ? 1.2 : 1,
+                  ? accentColor.withValues(alpha: 0.3)
+                  : Colors.redAccent.withValues(alpha: 0.2))
+              : appState.bgSubtle.withValues(alpha: 0.5),
+          width: 0.8,
         ),
       ),
       child: Row(
         children: [
-          Icon(
-            isRemoved
-                ? (hasSub ? Icons.swap_horiz_rounded : Icons.remove_circle_rounded)
-                : (isHave
-                    ? Icons.check_circle_rounded
-                    : isLow
-                        ? Icons.warning_amber_rounded
-                        : Icons.add_circle_outline_rounded),
-            size: 17,
-            color: isRemoved
-                ? (hasSub ? accentColor : Colors.redAccent.shade200)
-                : (isHave
-                    ? AppTheme.accentGreen
-                    : isLow
-                        ? AppTheme.accentAmber
-                        : AppTheme.textMuted),
-          ),
-          const SizedBox(width: 8),
+          if (isRemoved) ...[
+            Icon(
+              hasSub ? Icons.swap_horiz_rounded : Icons.remove_circle_outline_rounded,
+              size: 15,
+              color: hasSub ? accentColor : Colors.redAccent.shade200,
+            ),
+            const SizedBox(width: 8),
+          ] else if (isLow) ...[
+            Container(
+              width: 6,
+              height: 6,
+              margin: const EdgeInsets.only(right: 8),
+              decoration: const BoxDecoration(
+                color: AppTheme.accentAmber,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1799,8 +1796,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
           ] else ...[
             IconButton(
-              icon: const Icon(Icons.remove_circle_outline_rounded, size: 17),
-              color: AppTheme.textMuted,
+              icon: const Icon(Icons.remove_rounded, size: 16),
+              color: AppTheme.textLight,
               tooltip: 'Exclude ingredient',
               visualDensity: VisualDensity.compact,
               padding: const EdgeInsets.all(3),
@@ -2105,177 +2102,84 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     Color accentColor,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: appState.bgCard,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: appState.bgSubtle),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: appState.bgSubtle.withValues(alpha: 0.6), width: 0.8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.people_alt_outlined, size: 18, color: accentColor),
-                  const SizedBox(width: 8),
-                  Text(
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
                     'Portions & Servings',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textMain,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '· $_selectedServings',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: AppTheme.bgSurface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: appState.bgSubtle.withValues(alpha: 0.8)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove_rounded, size: 16),
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  constraints: const BoxConstraints(),
+                  splashRadius: 16,
+                  onPressed: _selectedServings > 1
+                      ? () => setState(() => _selectedServings--)
+                      : null,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '$_selectedServings',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.textMain,
                     ),
                   ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: accentColor.withValues(alpha: 0.3)),
                 ),
-                child: Text(
-                  '$_selectedServings ${_selectedServings == 1 ? "portion" : "servings"}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: accentColor,
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.add_rounded, size: 16),
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  constraints: const BoxConstraints(),
+                  splashRadius: 16,
+                  onPressed: _selectedServings < 12
+                      ? () => setState(() => _selectedServings++)
+                      : null,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Ingredient measurements scale dynamically to your target portion.',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11.5,
-              color: AppTheme.textMuted,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 10,
-            runSpacing: 8,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.bgSurface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: appState.bgSubtle),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_rounded, size: 18),
-                      visualDensity: VisualDensity.compact,
-                      splashRadius: 18,
-                      onPressed: _selectedServings > 1
-                          ? () => setState(() => _selectedServings--)
-                          : null,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        '$_selectedServings',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.textMain,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add_rounded, size: 18),
-                      visualDensity: VisualDensity.compact,
-                      splashRadius: 18,
-                      onPressed: _selectedServings < 12
-                          ? () => setState(() => _selectedServings++)
-                          : null,
-                    ),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildPortionChip(1, '1 (Solo)', accentColor, appState),
-                    const SizedBox(width: 6),
-                    _buildPortionChip(2, '2 (Standard)', accentColor, appState),
-                    const SizedBox(width: 6),
-                    _buildPortionChip(4, '4 (Family)', accentColor, appState),
-                    const SizedBox(width: 6),
-                    _buildPortionChip(6, '6 (Party)', accentColor, appState),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPortionChip(int count, String label, Color accentColor, AppState appState) {
-    final isSelected = _selectedServings == count;
-    return InkWell(
-      onTap: () => setState(() => _selectedServings = count),
-      borderRadius: BorderRadius.circular(10),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? accentColor : AppTheme.bgSurface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? accentColor : appState.bgSubtle,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? Colors.white : AppTheme.textMain,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _detailMetaChip(BuildContext context, IconData icon, String label) {
-    final bgCard = context.watch<AppState>().bgCard;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgCard,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.watch<AppState>().bgSubtle),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: AppTheme.textMuted),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textMuted,
+              ],
             ),
           ),
         ],
