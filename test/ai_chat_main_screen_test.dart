@@ -34,8 +34,9 @@ void main() {
       // Verify the Korean stamp emblem '식' is rendered in top bar and hero
       expect(find.text('식'), findsWidgets);
 
-      // Verify Culinary AI title and composer hint are rendered
-      expect(find.text('식 (sik) Culinary AI'), findsOneWidget);
+      // Verify Atelier title and composer hint are rendered
+      expect(find.text('ATELIER'), findsWidgets);
+      expect(find.textContaining('What would you like'), findsOneWidget);
       expect(find.text('Tell AI what you have or want to make...'), findsOneWidget);
     });
 

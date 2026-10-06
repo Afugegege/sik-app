@@ -96,57 +96,31 @@ class _MainShellState extends State<MainShell> {
             ),
           ],
 
-          // Sticky Bottom Navigation Bar (borderless, seamless)
+          // Sticky Bottom Navigation Bar (Korean Minimalist Editorial)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              height: 64,
+              height: 58,
               decoration: BoxDecoration(
                 color: appState.bgPrimary,
+                border: const Border(
+                  top: BorderSide(
+                    color: Color(0x10000000),
+                    width: 0.8,
+                  ),
+                ),
               ),
-              child: BottomNavigationBar(
-                currentIndex: appState.activeTabIndex,
-                onTap: (index) => appState.setActiveTab(index),
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: appState.bgPrimary,
-                selectedItemColor: accentColor,
-                unselectedItemColor: AppTheme.textMuted,
-                selectedFontSize: 10,
-                unselectedFontSize: 10,
-                elevation: 0,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.auto_awesome_outlined, size: 21),
-                    activeIcon: Icon(Icons.auto_awesome_rounded, size: 21),
-                    label: '식 AI',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.restaurant_menu_outlined, size: 21),
-                    activeIcon: Icon(Icons.restaurant_menu, size: 21),
-                    label: 'Dishes',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.kitchen_outlined, size: 21),
-                    activeIcon: Icon(Icons.kitchen, size: 21),
-                    label: 'Fridge',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.calendar_today_outlined, size: 21),
-                    activeIcon: Icon(Icons.calendar_today_rounded, size: 21),
-                    label: 'Journal',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.bookmark_border_rounded, size: 21),
-                    activeIcon: Icon(Icons.bookmark_rounded, size: 21),
-                    label: 'Saved',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline_rounded, size: 21),
-                    activeIcon: Icon(Icons.person_rounded, size: 21),
-                    label: 'Profile',
-                  ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _bottomNavItem(0, Icons.chat_bubble_outline_rounded, Icons.chat_bubble_rounded, '식 AI', appState, accentColor),
+                  _bottomNavItem(1, Icons.restaurant_menu_outlined, Icons.restaurant_menu, 'Dishes', appState, accentColor),
+                  _bottomNavItem(2, Icons.kitchen_outlined, Icons.kitchen, 'Pantry', appState, accentColor),
+                  _bottomNavItem(3, Icons.calendar_today_outlined, Icons.calendar_today_rounded, 'Journal', appState, accentColor),
+                  _bottomNavItem(4, Icons.bookmark_border_rounded, Icons.bookmark_rounded, 'Saved', appState, accentColor),
+                  _bottomNavItem(5, Icons.person_outline_rounded, Icons.person_rounded, 'Profile', appState, accentColor),
                 ],
               ),
             ),
@@ -376,6 +350,53 @@ class _MainShellState extends State<MainShell> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomNavItem(
+    int index,
+    IconData icon,
+    IconData activeIcon,
+    String label,
+    AppState appState,
+    Color accentColor,
+  ) {
+    final isSelected = appState.activeTabIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => appState.setActiveTab(index),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSelected ? activeIcon : icon,
+              size: 19,
+              color: isSelected ? accentColor : AppTheme.textMuted,
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 9.5,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                letterSpacing: 0.2,
+                color: isSelected ? accentColor : AppTheme.textMuted,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Container(
+              width: 3,
+              height: 3,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? accentColor : Colors.transparent,
+              ),
+            ),
+          ],
         ),
       ),
     );

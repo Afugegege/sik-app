@@ -168,20 +168,20 @@ class _AiStudioRecipeCardState extends State<AiStudioRecipeCard> {
   void _handleCopyRecipe(BuildContext context) {
     final r = widget.recipe;
     final sb = StringBuffer();
-    sb.writeln('🍳 ${r.title}');
+    sb.writeln(r.title);
     if (r.koreanTitle.isNotEmpty) sb.writeln(r.koreanTitle);
-    sb.writeln('⏱️ Time: ${r.cookingTime} | Difficulty: ${r.difficulty} | Servings: $_servings');
-    sb.writeln('\n🛒 INGREDIENTS:');
+    sb.writeln('Time: ${r.cookingTime} | Difficulty: ${r.difficulty} | Servings: $_servings');
+    sb.writeln('\nINGREDIENTS:');
     for (final ing in r.ingredients) {
       final scaled = ServingsScaler.scaleAmount(ing, _baseServings, _servings) ?? ing;
       sb.writeln('• $scaled');
     }
-    sb.writeln('\n👨‍🍳 INSTRUCTIONS:');
+    sb.writeln('\nINSTRUCTIONS:');
     for (int i = 0; i < r.instructions.length; i++) {
       sb.writeln('${i + 1}. ${r.instructions[i]}');
     }
     if (r.chefNote.isNotEmpty) {
-      sb.writeln('\n💡 Chef Tip: ${r.chefNote}');
+      sb.writeln('\nCHEF NOTE: ${r.chefNote}');
     }
 
     Clipboard.setData(ClipboardData(text: sb.toString()));
@@ -267,7 +267,7 @@ class _AiStudioRecipeCardState extends State<AiStudioRecipeCard> {
     final int matchPct = totalCount > 0 ? ((haveCount / totalCount) * 100).round() : 100;
 
     return Container(
-      margin: const EdgeInsets.only(left: 36, top: 8, bottom: 4),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: appState.bgCard,
         borderRadius: BorderRadius.circular(22),

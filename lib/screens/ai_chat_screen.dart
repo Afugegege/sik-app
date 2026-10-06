@@ -400,40 +400,15 @@ class _AiChatScreenState extends State<AiChatScreen> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: widget.isMainTab
-            ? Padding(
-                padding: const EdgeInsets.only(left: 14),
-                child: Center(
-                  child: Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: accentColor.withValues(alpha: 0.25),
-                        width: 1,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '식',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
+            ? null
             : IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
                 color: AppTheme.textMain,
                 tooltip: 'Back',
                 onPressed: () => Navigator.maybePop(context),
               ),
-        titleSpacing: widget.isMainTab ? 10 : 0,
+        automaticallyImplyLeading: !widget.isMainTab,
+        titleSpacing: widget.isMainTab ? 20 : 0,
         title: Row(
           children: [
             Text(
@@ -441,26 +416,39 @@ class _AiChatScreenState extends State<AiChatScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
-                color: accentColor,
-                letterSpacing: -0.8,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'studio',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
                 color: AppTheme.textMain,
-                letterSpacing: -0.3,
+                letterSpacing: -0.6,
               ),
             ),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+              height: 12,
+              width: 1,
+              color: AppTheme.textLight.withValues(alpha: 0.35),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'ATELIER',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2.2,
+                color: AppTheme.textMuted,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          // Quick Pantry Glance Pill (Korean Minimalist)
+          InkWell(
+            onTap: () => _showPantryQuickSheet(context, appState),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
               decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(10),
+                color: appState.bgCard,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: appState.bgSubtle, width: 1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -473,42 +461,12 @@ class _AiChatScreenState extends State<AiChatScreen> {
                       color: accentColor,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 6),
                   Text(
-                    'assistant',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: accentColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          // Quick Pantry Glance Pill
-          InkWell(
-            onTap: () => _showPantryQuickSheet(context, appState),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-              decoration: BoxDecoration(
-                color: appState.bgCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: appState.bgSubtle, width: 1),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.kitchen_outlined, size: 14, color: accentColor),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${appState.fridgeItems.length}',
+                    'pantry ${appState.fridgeItems.length}',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 11.5,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: AppTheme.textMain,
                     ),
                   ),
@@ -520,19 +478,12 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
           // Clear / Reset Conversation
           IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: appState.bgCard,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.refresh_rounded,
-                size: 16,
-                color: AppTheme.textMuted,
-              ),
+            icon: const Icon(
+              Icons.refresh_rounded,
+              size: 18,
+              color: AppTheme.textMuted,
             ),
-            tooltip: 'Reset Conversation',
+            tooltip: 'Reset session',
             onPressed: () {
               showDialog(
                 context: context,
@@ -603,17 +554,15 @@ class _AiChatScreenState extends State<AiChatScreen> {
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: (messages.length <= 1 ? 1 : 0) + messages.length + (isGenerating ? 1 : 0),
+                itemCount: (messages.length <= 1 ? 1 : messages.length) + (isGenerating ? 1 : 0),
                 itemBuilder: (context, index) {
-                  final showHero = messages.length <= 1;
-                  if (showHero && index == 0) {
+                  if (messages.length <= 1 && index == 0) {
                     return _buildIntroHero(appState, accentColor);
                   }
-                  final msgIndex = showHero ? index - 1 : index;
-                  if (msgIndex == messages.length && isGenerating) {
+                  if (index == messages.length && isGenerating) {
                     return _buildThinkingIndicator(accentColor, appState);
                   }
-                  final msg = messages[msgIndex];
+                  final msg = messages[index];
                   return _buildMessageItem(msg, appState, accentColor);
                 },
               ),
@@ -628,121 +577,203 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // KOREAN MINIMALIST HERO CARD WITH INTERACTIVE STARTERS
+  // KOREAN MINIMALIST ATELIER HERO (EDITORIAL CURATION)
   // ---------------------------------------------------------------------------
   Widget _buildIntroHero(AppState appState, Color accentColor) {
+    final pantryCount = appState.fridgeItems.length;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 20),
-      child: Center(
-        child: Column(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: accentColor.withValues(alpha: 0.22),
-                  width: 1.2,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          // Editorial Badge
+          Row(
+            children: [
+              Text(
+                '식 · 食',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 3.0,
+                  color: accentColor,
                 ),
               ),
-              child: Center(
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
+                decoration: BoxDecoration(
+                  color: appState.bgCard,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: appState.bgSubtle, width: 0.9),
+                ),
                 child: Text(
-                  '식',
+                  'ATELIER CURATION',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: accentColor,
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    color: AppTheme.textMuted,
                   ),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'What would you like\nto prepare today?',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              height: 1.22,
+              letterSpacing: -0.8,
+              color: AppTheme.textMain,
             ),
-            const SizedBox(height: 12),
-            Text(
-              '식 (sik) Culinary AI',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.textMain,
-                letterSpacing: -0.4,
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tell me what ingredients you hold, describe a dish,\nor batch-log items from your market haul.',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              height: 1.5,
+              color: AppTheme.textMuted,
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Tell me what ingredients you have, what you want to cook,\nor batch-log your grocery haul.',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.textMuted,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 18),
+          ),
+          const SizedBox(height: 24),
 
-            // Interactive Starter Cards
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildHeroChip('🍳 What can I cook with my fridge?', accentColor, () {
-                  final names = appState.fridgeItems.take(5).map((e) => e.name).join(', ');
-                  _handleSendMessage(names.isNotEmpty
-                      ? 'What can I cook with my kitchen ingredients: $names?'
-                      : 'What can I cook with what I have?');
-                }),
-                _buildHeroChip('🛒 I bought: salmon, eggs, rice, avocado', accentColor, () {
-                  _handleSendMessage('I bought groceries: salmon, eggs, rice, avocado');
-                }),
-                _buildHeroChip('🍪 Cookie ingredients guide', accentColor, () {
-                  _handleSendMessage('What ingredients do I need for cookies?');
-                }),
-                _buildHeroChip('⏱️ Quick 15-minute dinner', accentColor, () {
-                  _handleSendMessage('Give me 15-minute quick dinner ideas');
-                }),
-                _buildHeroChip('🧂 Korean sauce substitutions', accentColor, () {
-                  _handleSendMessage('Korean sauce substitutions');
-                }),
+          // Architectural Editorial Index Card (No Emojis)
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0x12000000),
+                width: 0.9,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 16,
+                  offset: Offset(0, 4),
+                ),
               ],
             ),
-          ],
-        ),
+            child: Column(
+              children: [
+                _buildCuratedIndexRow(
+                  index: '01',
+                  title: 'Pantry Tasting',
+                  subtitle: pantryCount > 0
+                      ? 'Compose a dish with your $pantryCount kitchen ingredients'
+                      : 'Explore dishes from your fresh ingredients',
+                  accentColor: accentColor,
+                  onTap: () {
+                    final names = appState.fridgeItems.take(5).map((e) => e.name).join(', ');
+                    _handleSendMessage(names.isNotEmpty
+                        ? 'What can I cook with my kitchen ingredients: $names?'
+                        : 'What can I cook with what I have?');
+                  },
+                ),
+                const Divider(height: 1, thickness: 0.8, color: Color(0x0E000000)),
+                _buildCuratedIndexRow(
+                  index: '02',
+                  title: '15-Minute Hearth Bowl',
+                  subtitle: 'Simple, balanced cooking for busy weeknights',
+                  accentColor: accentColor,
+                  onTap: () {
+                    _handleSendMessage('Give me 15-minute quick dinner ideas');
+                  },
+                ),
+                const Divider(height: 1, thickness: 0.8, color: Color(0x0E000000)),
+                _buildCuratedIndexRow(
+                  index: '03',
+                  title: 'Seasonal Market Haul',
+                  subtitle: 'Batch-log fresh produce & pantry essentials',
+                  accentColor: accentColor,
+                  onTap: () {
+                    _handleSendMessage('I bought groceries: salmon, eggs, rice, avocado');
+                  },
+                ),
+                const Divider(height: 1, thickness: 0.8, color: Color(0x0E000000)),
+                _buildCuratedIndexRow(
+                  index: '04',
+                  title: 'Essential Jang & Ratios',
+                  subtitle: 'Traditional Korean pastes, sauces & balance formulas',
+                  accentColor: accentColor,
+                  onTap: () {
+                    _handleSendMessage('Korean sauce substitutions');
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+        ],
       ),
     );
   }
 
-  Widget _buildHeroChip(String text, Color accentColor, VoidCallback onTap) {
+  Widget _buildCuratedIndexRow({
+    required String index,
+    required String title,
+    required String subtitle,
+    required Color accentColor,
+    required VoidCallback onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7.5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: accentColor.withValues(alpha: 0.20),
-              width: 1,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x06000000),
-                blurRadius: 6,
-                offset: Offset(0, 2),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                index,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: AppTheme.textLight,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textMain,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppTheme.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Icon(
+                Icons.arrow_forward_rounded,
+                size: 14,
+                color: AppTheme.textLight,
               ),
             ],
-          ),
-          child: Text(
-            text,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textMain,
-            ),
           ),
         ),
       ),
@@ -1615,17 +1646,16 @@ class _AiChatScreenState extends State<AiChatScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Quick Kitchen Intelligence Capsule Strip
+              // Minimalist Editorial Quick Actions Strip
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
                       _buildQuickActionCapsule(
-                        icon: Icons.kitchen_outlined,
-                        label: 'Use My Fridge (${appState.fridgeItems.length})',
+                        label: 'pantry dishes (${appState.fridgeItems.length})',
                         onTap: () {
                           final names = appState.fridgeItems.take(5).map((e) => e.name).join(', ');
                           if (names.isNotEmpty) {
@@ -1634,12 +1664,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
                             _handleSendMessage('What can I cook with my fridge?');
                           }
                         },
-                        accentColor: accentColor,
+                        appState: appState,
                       ),
                       const SizedBox(width: 6),
                       _buildQuickActionCapsule(
-                        icon: Icons.add_shopping_cart_outlined,
-                        label: 'Log Groceries',
+                        label: '15m hearth',
+                        onTap: () => _handleSendMessage('15-minute quick meal recipe'),
+                        appState: appState,
+                      ),
+                      const SizedBox(width: 6),
+                      _buildQuickActionCapsule(
+                        label: 'market log',
                         onTap: () {
                           _controller.text = 'I bought: ';
                           _controller.selection = TextSelection.fromPosition(
@@ -1647,75 +1682,60 @@ class _AiChatScreenState extends State<AiChatScreen> {
                           );
                           _focusNode.requestFocus();
                         },
-                        accentColor: accentColor,
+                        appState: appState,
                       ),
                       const SizedBox(width: 6),
                       _buildQuickActionCapsule(
-                        icon: Icons.restaurant_menu_outlined,
-                        label: 'Dinner Ideas',
-                        onTap: () => _handleSendMessage('Dinner recipe ideas'),
-                        accentColor: accentColor,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildQuickActionCapsule(
-                        icon: Icons.bolt_rounded,
-                        label: '15m Quick Meal',
-                        onTap: () => _handleSendMessage('15-minute quick meal recipe'),
-                        accentColor: accentColor,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildQuickActionCapsule(
-                        icon: Icons.cookie_outlined,
-                        label: 'Baking Guide',
-                        onTap: () => _handleSendMessage('What ingredients do I need for cookies?'),
-                        accentColor: accentColor,
+                        label: 'jang & ratios',
+                        onTap: () => _handleSendMessage('Korean sauce substitutions'),
+                        appState: appState,
                       ),
                     ],
                   ),
                 ),
               ),
 
-              // Text Field & Action Buttons Row
-              Row(
-                children: [
-                  // Attachment / Menu Button
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () => _showAttachmentMenu(context, appState),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: appState.bgSubtle,
-                          shape: BoxShape.circle,
+              // Unified Floating Input Capsule
+              Container(
+                padding: const EdgeInsets.fromLTRB(4, 4, 6, 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: const Color(0x18000000),
+                    width: 0.9,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x06000000),
+                      blurRadius: 14,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Attachment Action
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () => _showAttachmentMenu(context, appState),
+                        child: const Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Icon(
+                            Icons.add_rounded,
+                            color: AppTheme.textMuted,
+                            size: 21,
+                          ),
                         ),
-                        child: Icon(Icons.add_rounded, color: AppTheme.textMain, size: 20),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 2),
 
-                  // Main Text Input Field
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: const Color(0x14000000),
-                          width: 1,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x06000000),
-                            blurRadius: 10,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
+                    // Main Text Input Field
+                    Expanded(
                       child: TextField(
                         controller: _controller,
                         focusNode: _focusNode,
@@ -1725,7 +1745,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         onSubmitted: (val) => _handleSendMessage(val),
                         onChanged: (_) => setState(() {}),
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w500,
                           color: AppTheme.textMain,
                         ),
@@ -1738,83 +1758,73 @@ class _AiChatScreenState extends State<AiChatScreen> {
                           ),
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 4),
 
-                  // Microphone Voice Button
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () async {
-                        final res = await VoiceMessageDialog.show(context);
-                        if (res != null) {
-                          _handleSendMessage(res.text, isVoice: true, voiceDuration: res.durationSeconds);
-                        }
-                      },
-                      child: Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
+                    // Microphone Voice Button
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () async {
+                          final res = await VoiceMessageDialog.show(context);
+                          if (res != null) {
+                            _handleSendMessage(res.text, isVoice: true, voiceDuration: res.durationSeconds);
+                          }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Icon(
+                            Icons.mic_none_rounded,
+                            color: AppTheme.textMuted,
+                            size: 20,
+                          ),
                         ),
-                        child: Icon(Icons.mic_rounded, color: accentColor, size: 20),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
+                    const SizedBox(width: 2),
 
-                  // Send Button
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () => _handleSendMessage(_controller.text),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        curve: Curves.easeOutCubic,
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: hasText ? accentColor : appState.bgSubtle,
-                          shape: BoxShape.circle,
-                          boxShadow: hasText
-                              ? [
-                                  BoxShadow(
-                                    color: accentColor.withValues(alpha: 0.35),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Center(
-                          child: isGenerating
-                              ? SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      hasText ? Colors.white : accentColor,
+                    // Modern Send Button
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
+                        onTap: () => _handleSendMessage(_controller.text),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          curve: Curves.easeOutCubic,
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: hasText ? AppTheme.textMain : appState.bgSubtle,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: isGenerating
+                                ? SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1.8,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        hasText ? Colors.white : accentColor,
+                                      ),
                                     ),
+                                  )
+                                : Icon(
+                                    Icons.arrow_upward_rounded,
+                                    color: hasText ? Colors.white : AppTheme.textLight,
+                                    size: 17,
                                   ),
-                                )
-                              : Icon(
-                                  Icons.arrow_upward_rounded,
-                                  color: hasText ? Colors.white : AppTheme.textLight,
-                                  size: 18,
-                                ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -1824,38 +1834,31 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   Widget _buildQuickActionCapsule({
-    required IconData icon,
     required String label,
     required VoidCallback onTap,
-    required Color accentColor,
+    required AppState appState,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: appState.bgCard,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: accentColor.withValues(alpha: 0.18),
-            width: 1,
+            color: appState.bgSubtle,
+            width: 0.9,
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 12, color: accentColor),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textMain,
-              ),
-            ),
-          ],
+        child: Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
+            color: AppTheme.textMain,
+          ),
         ),
       ),
     );

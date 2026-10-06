@@ -127,14 +127,14 @@ class AppState extends ChangeNotifier {
   final List<AiChatMessage> _chatMessages = [
     AiChatMessage(
       id: 'welcome_1',
-      text: '안녕하세요! What are we cooking or prepping today?\n\nAsk for recipe ideas with your fridge items, cookie & baking ratios, Korean sauce substitutions, or batch-log your grocery haul.',
+      text: 'What would you like to craft in the kitchen today?\n\nTell me what ingredients you hold, or ask for seasonal dish curation, traditional Korean jang balances, and grocery logging.',
       isUser: false,
       timestamp: DateTime.now(),
       quickReplies: const [
-        'What can I cook with my fridge?',
-        'Cookie & baking guide',
-        'Batch add groceries to fridge',
-        'Korean sauce guide',
+        'Dishes from my pantry',
+        'Quick 15-minute meal',
+        'Log grocery haul',
+        'Korean sauce balance',
       ],
     ),
   ];
@@ -364,14 +364,14 @@ class AppState extends ChangeNotifier {
     _chatMessages.add(
       AiChatMessage(
         id: 'welcome_${DateTime.now().millisecondsSinceEpoch}',
-        text: '안녕하세요! What are we cooking or prepping today?\n\nAsk for recipe ideas with your fridge items, cookie & baking ratios, Korean sauce substitutions, or batch-log your grocery haul.',
+        text: 'What would you like to craft in the kitchen today?\n\nTell me what ingredients you hold, or ask for seasonal dish curation, traditional Korean jang balances, and grocery logging.',
         isUser: false,
         timestamp: DateTime.now(),
         quickReplies: const [
-          'What can I cook with my fridge?',
-          'Cookie & baking guide',
-          'Batch add groceries to fridge',
-          'Korean sauce guide',
+          'Dishes from my pantry',
+          'Quick 15-minute meal',
+          'Log grocery haul',
+          'Korean sauce balance',
         ],
       ),
     );

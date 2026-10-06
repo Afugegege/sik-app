@@ -35,8 +35,8 @@ class RecipeCard extends StatelessWidget {
       const color = Color(0xFFD97706);
       final bgColor = onImage ? Colors.white.withValues(alpha: 0.94) : const Color(0xFFFEF3C7);
       final label = isGrid
-          ? '🛒 ${recipe.missingIngredientsCount} to get'
-          : '🛒 Grocery Run · ${recipe.missingIngredientsCount} to get';
+          ? '${recipe.missingIngredientsCount} to get'
+          : 'Grocery Run · ${recipe.missingIngredientsCount} to get';
 
       return Container(
         padding: EdgeInsets.symmetric(horizontal: isGrid ? 7 : 10, vertical: isGrid ? 3.5 : 4.5),
@@ -576,7 +576,7 @@ class RecipeCard extends StatelessWidget {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('🛒 Added ${missingNames.length} missing items to Shopping List!'),
+                              content: Text('Added ${missingNames.length} missing items to Shopping List!'),
                               behavior: SnackBarBehavior.floating,
                               duration: const Duration(seconds: 2),
                             ),
